@@ -1,4 +1,4 @@
-package KWIC;
+package kwic;
 
 import java.util.ArrayList;
 

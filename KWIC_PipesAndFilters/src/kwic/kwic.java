@@ -8,6 +8,10 @@ import pipe_structures.PipeImpl;
 import pipe_structures.Pump;
 import pipe_structures.Sink;
 
+/**
+ * This is the main class of the program.
+ * It handles the creation of the Pipe and Filters and starts them.
+ */
 public class kwic {
     public static void main(String[] args) {
         // create pipes
@@ -35,6 +39,6 @@ public class kwic {
         alphabetizer.start();
         output.start();
 
-        System.out.println("runner finished");
+        System.out.println("DONE");
     }
 }

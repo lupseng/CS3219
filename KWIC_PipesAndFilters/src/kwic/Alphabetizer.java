@@ -6,6 +6,10 @@ import java.util.Collections;
 import pipe_structures.Filter;
 import pipe_structures.Pipe;
 
+/**
+ * This Filter has one input pipe and one output pipe.
+ * The input is the unsorted kwic and the output is the sorted kwic
+ */
 public class Alphabetizer extends Filter<String, String> {
 
     public Alphabetizer(ArrayList<Pipe<String>> input, Pipe<String> output) {
@@ -30,7 +34,7 @@ public class Alphabetizer extends Filter<String, String> {
             }
 
         } catch (InterruptedException e) {
-            System.err.println("interrupted");
+            System.err.println("Program interrupted");
             e.printStackTrace();
             return;
         }

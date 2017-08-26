@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import pipe_structures.Pipe;
 import pipe_structures.Pump;
 
+/**
+ * This Pump gets data from two text files and has 2 output pipe.
+ * The 2 output are the list of titles and list of words to ignore.
+ */
 public class Input extends Pump<String>{
 
     public Input(ArrayList<Pipe<String>> output) {

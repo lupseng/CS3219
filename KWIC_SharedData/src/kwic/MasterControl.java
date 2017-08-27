@@ -39,15 +39,14 @@ public class MasterControl {
         wordsToIgnore.add("a");
         wordsToIgnore.add("after");
 
-        BufferedReader reader;
-        String line;
         try {
 
             File file = new File("Input");
             InputStream inStream = new FileInputStream(file);
             InputStreamReader inStreamReader = new InputStreamReader(inStream, Charset.forName("UTF-8"));
-            reader = new BufferedReader(inStreamReader);
+            BufferedReader reader = new BufferedReader(inStreamReader);
             boolean changeArray = false;
+            String line;
 
             while((line = reader.readLine()) != null) {
                 if(line.isEmpty()) {
@@ -58,6 +57,8 @@ public class MasterControl {
                     titles.add(line);
                 }
             }
+
+            reader.close();
 
         } catch (FileNotFoundException ex) {
             System.out.println("File Not Found!");

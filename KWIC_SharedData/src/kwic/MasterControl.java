@@ -1,6 +1,14 @@
 package kwic;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MasterControl {
     private static ArrayList<String> titles = new ArrayList<>();
@@ -30,6 +38,34 @@ public class MasterControl {
         wordsToIgnore.add("as");
         wordsToIgnore.add("a");
         wordsToIgnore.add("after");
+
+        BufferedReader reader;
+        String line;
+        try {
+
+            File file = new File("Input");
+            InputStream inStream = new FileInputStream(file);
+            InputStreamReader inStreamReader = new InputStreamReader(inStream, Charset.forName("UTF-8"));
+            reader = new BufferedReader(inStreamReader);
+            boolean changeArray = false;
+
+            while((line = reader.readLine()) != null) {
+                if(line.isEmpty()) {
+                    changeArray = !changeArray;
+                } else if(changeArray) {
+                    wordsToIgnore.add(line);
+                } else {
+                    titles.add(line);
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("File Not Found!");
+        } catch (RuntimeException ex) {
+            System.out.println("Error. Cannot write to a closed pipe!");
+        } catch (IOException ex) {
+            System.out.println("Invalid File!");
+        }
     }
 
     /**
@@ -55,8 +91,7 @@ public class MasterControl {
      * sorts kwic alphabetically.
      */
     private static void alphabetizer(){
-
-
+        Collections.sort(kwic);
     }
 
     /**

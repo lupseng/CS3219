@@ -31,10 +31,17 @@ public class CircularShift extends Filter<String, String> {
             String title;
             while ((title = titlePipe.read()) != null) {
 
-                //TODO:
+                String[] words = title.split(" ");
 
-                output.write("result");//this writes to output pipe
+                for(String word : words){
+                    if(!ignoreList.contains(word.toLowerCase())){
+                        //keyword found
+                        int index = title.indexOf(word);
+                        output.write(title.substring(index).concat(" ").concat(title.substring(0, index)));//this writes to output pipe
+                    }
+                }
             }
+
         } catch (InterruptedException e) {
             System.err.println("Program interrupted");
             e.printStackTrace();

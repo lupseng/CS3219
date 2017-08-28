@@ -14,9 +14,10 @@ public class MasterControl {
     private static ArrayList<String> titles = new ArrayList<>();
     private static ArrayList<String> wordsToIgnore = new ArrayList<>(); //all lower case
     private static ArrayList<String> kwic = new ArrayList<>();
+    private static String fileName = "Input"; //Default fileName
 
     public static void main(String[] args) {
-        input();
+        input((args.length  > 0) ? args[0] : fileName);
         circularShift();
         alphabetizer();
         output();
@@ -25,7 +26,7 @@ public class MasterControl {
     /**
      * Gets input from files and store them into titles and wordsToIgnore.
      */
-    private static void input(){
+    private static void input(String fileName){
         titles.add("The Day after Tomorrow");
         titles.add("Fast and Furious");
         titles.add("Man of Steel");
@@ -41,7 +42,7 @@ public class MasterControl {
 
         try {
 
-            File file = new File("Input");
+            File file = new File(fileName);
             InputStream inStream = new FileInputStream(file);
             InputStreamReader inStreamReader = new InputStreamReader(inStream, Charset.forName("UTF-8"));
             BufferedReader reader = new BufferedReader(inStreamReader);

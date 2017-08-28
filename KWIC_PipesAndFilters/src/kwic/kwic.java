@@ -13,16 +13,23 @@ import pipe_structures.Sink;
  * It handles the creation of the Pipe and Filters and starts them.
  */
 public class kwic {
+
     public static void main(String[] args) {
+        //Default FileName
+        final String defaultfileName = "Input";
+
         // create pipes
         final Pipe<String> titlePipe = new PipeImpl<String>();
         final Pipe<String> ignorePipe = new PipeImpl<String>();
+        final Pipe<String> fileNamePipe = new PipeImpl<String>();
         final Pipe<String> kwicPipe = new PipeImpl<String>();
         final Pipe<String> sortedKwicPipe = new PipeImpl<String>();
 
         ArrayList<Pipe<String> > inputPipes = new ArrayList<>();
+        fileNamePipe.write((args.length  > 0) ? args[0] : defaultfileName);
         inputPipes.add(titlePipe);
         inputPipes.add(ignorePipe);
+        inputPipes.add(fileNamePipe);
 
         ArrayList<Pipe<String> > kwicPipes = new ArrayList<>();
         kwicPipes.add(kwicPipe);
@@ -41,4 +48,5 @@ public class kwic {
 
         System.out.println("DONE");
     }
+
 }

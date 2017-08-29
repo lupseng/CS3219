@@ -16,32 +16,26 @@ public class MasterControl {
     private static ArrayList<String> titles = new ArrayList<>();
     private static ArrayList<String> wordsToIgnore = new ArrayList<>(); //all lower case
     private static ArrayList<String> kwic = new ArrayList<>();
-    private static String inFileName = "Input"; //Default fileName
-    private static String outFileName = "Output"; //Default fileName
+    private static String inFileName = "Input.txt"; //Default fileName
+    private static String outFileName = "Output.txt"; //Default fileName
 
     public static void main(String[] args) {
-        input((args.length  > 0) ? args[0] : inFileName);
-        circularShift();
-        alphabetizer();
-        output((args.length  > 1) ? args[1] : outFileName);
+        try {
+            input((args.length  > 0) ? args[0] : inFileName);
+            circularShift();
+            alphabetizer();
+            output((args.length  > 1) ? args[1] : outFileName);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
      * Gets input from files and store them into titles and wordsToIgnore.
+     * @throws IOException
      */
-    private static void input(String fileName){
-        titles.add("The Day after Tomorrow");
-        titles.add("Fast and Furious");
-        titles.add("Man of Steel");
-
-        //toLowerCase() before add to wordsToIgnore
-        wordsToIgnore.add("is");
-        wordsToIgnore.add("the");
-        wordsToIgnore.add("of");
-        wordsToIgnore.add("and");
-        wordsToIgnore.add("as");
-        wordsToIgnore.add("a");
-        wordsToIgnore.add("after");
+    private static void input(String fileName) throws IOException{
 
         try {
 
@@ -56,7 +50,7 @@ public class MasterControl {
                 if(line.isEmpty()) {
                     changeArray = !changeArray;
                 } else if(changeArray) {
-                    wordsToIgnore.add(line);
+                    wordsToIgnore.add(line.toLowerCase());  //case insensitive
                 } else {
                     titles.add(line);
                 }
@@ -65,11 +59,9 @@ public class MasterControl {
             reader.close();
 
         } catch (FileNotFoundException ex) {
-            System.out.println("File Not Found!");
-        } catch (RuntimeException ex) {
-            System.out.println("Error. Cannot write to a closed pipe!");
+            throw new FileNotFoundException("File Not Found!");
         } catch (IOException ex) {
-            System.out.println("Invalid File!");
+            throw new IOException("Invalid File!");
         }
     }
 

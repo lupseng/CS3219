@@ -1,8 +1,10 @@
 package kwic;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,13 +16,14 @@ public class MasterControl {
     private static ArrayList<String> titles = new ArrayList<>();
     private static ArrayList<String> wordsToIgnore = new ArrayList<>(); //all lower case
     private static ArrayList<String> kwic = new ArrayList<>();
-    private static String fileName = "Input"; //Default fileName
+    private static String inFileName = "Input"; //Default fileName
+    private static String outFileName = "Output"; //Default fileName
 
     public static void main(String[] args) {
-        input((args.length  > 0) ? args[0] : fileName);
+        input((args.length  > 0) ? args[0] : inFileName);
         circularShift();
         alphabetizer();
-        output();
+        output((args.length  > 1) ? args[1] : outFileName);
     }
 
     /**
@@ -99,10 +102,29 @@ public class MasterControl {
     /**
      * prints kwic into a file
      */
-    private static void output(){
+    private static void output(String fileName){
+
+        try {
+
+        File file = new File(fileName);
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(), true); //true, file will not be overwritten.
+        BufferedWriter writer = new BufferedWriter(fileWriter);
 
         for(String s : kwic){
+            writer.write(s);
+            writer.newLine();
             System.out.println(s);
+        }
+
+        writer.close();
+
+        } catch(IOException e) {
+            System.out.println("Error writing to file");
         }
     }
 

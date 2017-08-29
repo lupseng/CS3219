@@ -15,21 +15,21 @@ import pipe_structures.Sink;
 public class kwic {
 
     public static void main(String[] args) {
-        //Default FileName
-        final String defaultfileName = "Input";
 
         // create pipes
         final Pipe<String> titlePipe = new PipeImpl<String>();
         final Pipe<String> ignorePipe = new PipeImpl<String>();
-        final Pipe<String> fileNamePipe = new PipeImpl<String>();
+        final Pipe<String> fileNameInPipe = new PipeImpl<String>();
+        final Pipe<String> fileNameOutPipe = new PipeImpl<String>();
         final Pipe<String> kwicPipe = new PipeImpl<String>();
         final Pipe<String> sortedKwicPipe = new PipeImpl<String>();
 
         ArrayList<Pipe<String> > inputPipes = new ArrayList<>();
-        fileNamePipe.write((args.length  > 0) ? args[0] : defaultfileName);
+        fileNameInPipe.write((args.length  > 0) ? args[0] : null);
+        fileNameOutPipe.write((args.length  > 1) ? args[1] : null);
         inputPipes.add(titlePipe);
         inputPipes.add(ignorePipe);
-        inputPipes.add(fileNamePipe);
+        inputPipes.add(fileNameInPipe);
 
         ArrayList<Pipe<String> > kwicPipes = new ArrayList<>();
         kwicPipes.add(kwicPipe);
@@ -38,7 +38,7 @@ public class kwic {
         final Pump<String> input = new Input(inputPipes);
         final Filter<String, String> circularShift = new CircularShift(inputPipes, kwicPipe);
         final Filter<String, String> alphabetizer = new Alphabetizer(kwicPipes, sortedKwicPipe);
-        final Sink<String> output = new Output(sortedKwicPipe);
+        final Sink<String> output = new Output(sortedKwicPipe, fileNameOutPipe);
 
         // start all components
         input.start();

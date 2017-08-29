@@ -29,7 +29,7 @@ public class Alphabetizer extends Filter<String, String> {
 
             Collections.sort(kwic);
 
-            for(String sortedLine : kwic){
+            for (String sortedLine : kwic) {
                 output.write(sortedLine);
             }
 

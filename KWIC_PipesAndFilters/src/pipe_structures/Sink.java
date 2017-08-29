@@ -2,7 +2,7 @@ package pipe_structures;
 
 import java.util.ArrayList;
 
-public abstract class Sink<T> extends Runner{
+public abstract class Sink<T> extends Runner {
     protected ArrayList<Pipe<T>> input = new ArrayList<>();
 
     public Sink(ArrayList<Pipe<T>> input) {
@@ -10,7 +10,7 @@ public abstract class Sink<T> extends Runner{
     }
 
     @Override
-    public void run(){
+    public void run() {
         read(input);
     }
 

@@ -6,15 +6,15 @@ public abstract class Runner implements Runnable {
     @Override
     abstract public void run();
 
-    public void start(){
-        if(!isRunning){
+    public void start() {
+        if (!isRunning) {
             Thread thread = new Thread(this);
             thread.start();
             isRunning = true;
         }
     }
 
-    public void stop(){
+    public void stop() {
         isRunning = false;
     }
 }

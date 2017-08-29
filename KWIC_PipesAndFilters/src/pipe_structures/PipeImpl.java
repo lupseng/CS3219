@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-public class PipeImpl<T> implements Pipe<T>{
+public class PipeImpl<T> implements Pipe<T> {
     private Queue<T> buffer = new LinkedList<T>();
     private boolean isOpen = true;
     private boolean isDone = false;
@@ -20,7 +20,7 @@ public class PipeImpl<T> implements Pipe<T>{
 
         boolean isAdded = buffer.add(obj);
         notify();
-        //System.out.println("added to pipe: " + (obj==null?"<null>":obj.toString()));
+        // System.out.println("added to pipe: " + (obj==null?"<null>":obj.toString()));
         return isAdded;
     }
 

@@ -19,26 +19,27 @@ public class kwic {
         // create pipes
         final Pipe<String> titlePipe = new PipeImpl<String>();
         final Pipe<String> ignorePipe = new PipeImpl<String>();
-        final Pipe<String> fileNameInPipe = new PipeImpl<String>();
-        final Pipe<String> fileNameOutPipe = new PipeImpl<String>();
+        final Pipe<String> outFileNamePipe = new PipeImpl<String>();
         final Pipe<String> kwicPipe = new PipeImpl<String>();
         final Pipe<String> sortedKwicPipe = new PipeImpl<String>();
 
-        ArrayList<Pipe<String> > inputPipes = new ArrayList<>();
-        fileNameInPipe.write((args.length  > 0) ? args[0] : null);
-        fileNameOutPipe.write((args.length  > 1) ? args[1] : null);
-        inputPipes.add(titlePipe);
-        inputPipes.add(ignorePipe);
-        inputPipes.add(fileNameInPipe);
+        ArrayList<Pipe<String> > inputPipes = new ArrayList<>(); //used by Input and CircularShift
+        inputPipes.add(titlePipe);          //connect to CircularShift
+        inputPipes.add(ignorePipe);         //connect to CircularShift
+        inputPipes.add(outFileNamePipe);    //connect to Output
 
-        ArrayList<Pipe<String> > kwicPipes = new ArrayList<>();
+        ArrayList<Pipe<String> > kwicPipes = new ArrayList<>(); //used by Alphabetizer
         kwicPipes.add(kwicPipe);
+
+        ArrayList<Pipe<String> > outputPipes = new ArrayList<>(); //used by Output
+        outputPipes.add(sortedKwicPipe);      //connect from Alphabetizer
+        outputPipes.add(outFileNamePipe);    //connect from Input
 
         // create components that use the pipes
         final Pump<String> input = new Input(inputPipes);
         final Filter<String, String> circularShift = new CircularShift(inputPipes, kwicPipe);
         final Filter<String, String> alphabetizer = new Alphabetizer(kwicPipes, sortedKwicPipe);
-        final Sink<String> output = new Output(sortedKwicPipe, fileNameOutPipe);
+        final Sink<String> output = new Output(outputPipes);
 
         // start all components
         input.start();
@@ -46,7 +47,7 @@ public class kwic {
         alphabetizer.start();
         output.start();
 
-        System.out.println("DONE");
+        //System.out.println("DONE");
     }
 
 }

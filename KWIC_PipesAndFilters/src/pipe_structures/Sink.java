@@ -1,9 +1,11 @@
 package pipe_structures;
 
-public abstract class Sink<T> extends Runner{
-    protected Pipe<T> input;
+import java.util.ArrayList;
 
-    public Sink(Pipe<T> input) {
+public abstract class Sink<T> extends Runner{
+    protected ArrayList<Pipe<T>> input = new ArrayList<>();
+
+    public Sink(ArrayList<Pipe<T>> input) {
         this.input = input;
     }
 
@@ -12,5 +14,5 @@ public abstract class Sink<T> extends Runner{
         read(input);
     }
 
-    public abstract void read(Pipe<T> pipe);
+    public abstract void read(ArrayList<Pipe<T>> pipe);
 }

@@ -9,15 +9,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import pipe_structures.Pipe;
 import pipe_structures.Pump;
 
 /**
- * This Pump gets data from two text files and has 2 output pipe.
- * The 2 output are the list of titles and list of words to ignore.
+ * This Pump gets file names from user input and then gets data from the specified text file.
+ * It has 3 output pipe. 2 output are the list of titles and list of words to ignore.
+ * The third output pipe is for the output_file name.
  */
-public class Input extends Pump<String>{
+public class Input extends Pump<String> {
+    private static String default_inFileName = "Input.txt"; // Default fileName
+    private static String default_outFileName = "Output.txt"; // Default fileName
 
     public Input(ArrayList<Pipe<String>> output) {
         super(output);
@@ -26,44 +30,48 @@ public class Input extends Pump<String>{
     @Override
     public void pumpData(ArrayList<Pipe<String>> pipes) {
         Pipe<String> titlePipe = pipes.get(0);
-        titlePipe.write("The Day after Tomorrow");
-        titlePipe.write("Fast and Furious");
-        titlePipe.write("Man of Steel");
-
         Pipe<String> ignorePipe = pipes.get(1);
-        ignorePipe.write("is");
-        ignorePipe.write("the");
-        ignorePipe.write("of");
-        ignorePipe.write("and");
-        ignorePipe.write("as");
-        ignorePipe.write("a");
-        ignorePipe.write("after");
+        Pipe<String> outFileNamePipe = pipes.get(2);
 
-        try {
-            String fileName = getFileName(pipes.get(2));
-            input(titlePipe, ignorePipe, fileName);
-        } catch (InterruptedException ex) {
-            System.out.println("Program Interrupted");
-        }
+        String inFileName = getInFileName();
+        String outFileName = getOutFileName();
 
-        //close pipes
+        processFile(titlePipe, ignorePipe, inFileName); // get data from input file and write to pipes
+        outFileNamePipe.write(outFileName); // tell Output the output_file name
+
+        // close pipes
         titlePipe.close();
         ignorePipe.close();
-        System.out.println("titlePipe & ignorePipe finished");
+        outFileNamePipe.close();
     }
 
-    private String getFileName(Pipe<String> fileNamePipe) throws InterruptedException{
-        String fileName;
+    private String getInFileName() {
+        String inFileName;
+        System.out.println("Please enter file name to read from: (Just leave blank if using the default, Input.txt)");
+        Scanner sc = new Scanner(System.in);
+        inFileName = sc.nextLine();
 
-        if((fileName = fileNamePipe.read()) != null) {
-            fileNamePipe.close();
-            return fileName;
+        if (inFileName.equals("")) {
+            return default_inFileName;
+        } else {
+            return inFileName;
         }
-
-        return fileName;
     }
 
-    private static void input(Pipe<String> titlePipe, Pipe<String> ignorePipe, String fileName) {
+    private String getOutFileName() {
+        String outFileName;
+        System.out.println("Please enter file name to save to: (Just leave blank to use the default, Output.txt)");
+        Scanner sc = new Scanner(System.in);
+        outFileName = sc.nextLine();
+
+        if (outFileName.equals("")) {
+            return default_outFileName;
+        } else {
+            return outFileName;
+        }
+    }
+
+    private static void processFile(Pipe<String> titlePipe, Pipe<String> ignorePipe, String fileName) {
         try {
 
             File file = new File(fileName);
@@ -73,11 +81,11 @@ public class Input extends Pump<String>{
             boolean changeArray = false;
             String line;
 
-            while((line = reader.readLine()) != null) {
-                if(line.isEmpty()) {
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty()) {
                     changeArray = !changeArray;
-                } else if(changeArray) {
-                    ignorePipe.write(line);
+                } else if (changeArray) {
+                    ignorePipe.write(line.toLowerCase());   //case insensitive
                 } else {
                     titlePipe.write(line);
                 }

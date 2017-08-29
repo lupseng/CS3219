@@ -90,7 +90,7 @@ public class MasterControl {
      * sorts kwic alphabetically.
      */
     private static void alphabetizer() {
-        Collections.sort(kwic);
+        Collections.sort(kwic, String.CASE_INSENSITIVE_ORDER);
     }
 
     /**

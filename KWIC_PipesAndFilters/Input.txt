@@ -2,7 +2,9 @@ I am DiFeng
 The Day after Tomorrow
 Fast and Furious
 Man of Steel
+KWIC is an acronym for Key Word In Context, the most common format for concordance lines
 
+an
 am
 is
 the
@@ -11,3 +13,4 @@ and
 as
 a
 after
+for

@@ -27,7 +27,7 @@ public class Alphabetizer extends Filter<String, String> {
                 kwic.add(line);
             }
 
-            Collections.sort(kwic);
+            Collections.sort(kwic, String.CASE_INSENSITIVE_ORDER);
 
             for (String sortedLine : kwic) {
                 output.write(sortedLine);

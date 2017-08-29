@@ -104,7 +104,7 @@ public class MasterControl {
             file.createNewFile();
         }
 
-        FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(), true); //true, file will not be overwritten.
+        FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(), false);
         BufferedWriter writer = new BufferedWriter(fileWriter);
 
         for(String s : kwic){

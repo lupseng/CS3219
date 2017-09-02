@@ -26,7 +26,7 @@ public class MasterControl {
         //set Input and Output fileNames;
         if(args.length == 2) {
             dataManager.setInputFileName(args[0]);
-            dataManager.setInputFileName(args[1]);
+            dataManager.setOutputFileName(args[1]);
         }
 
     }

@@ -9,6 +9,8 @@ public interface DataStorageInterface<T> {
     ArrayList<T> getTitles();
     ArrayList<T> getWordsToIgnore();
     ArrayList<T> getShiftedWords();
-    T getDefaultInputFileName();
-    T getDefaultOutputFileName();
+    void setInputFileName(String fileName);
+    void setOutputFileName(String fileName);
+    T getInputFileName();
+    T getOutputFileName();
 }

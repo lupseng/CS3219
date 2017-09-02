@@ -6,8 +6,8 @@ public class DataStorage implements DataStorageInterface<String> {
     private static ArrayList<String> titles = new ArrayList<>();
     private static ArrayList<String> wordsToIgnore = new ArrayList<>(); // all lower case
     private static ArrayList<String> kwic = new ArrayList<>();
-    private static String inFileName = "Input.txt"; // Default fileName
-    private static String outFileName = "Output.txt"; // Default fileName
+    private String inFileName = "Input.txt"; // Default fileName
+    private String outFileName = "Output.txt"; // Default fileName
 
     public DataStorage() {
 
@@ -44,12 +44,23 @@ public class DataStorage implements DataStorageInterface<String> {
     }
 
     @Override
-    public String getDefaultInputFileName() {
+    public String getInputFileName() {
         return inFileName;
     }
 
     @Override
-    public String getDefaultOutputFileName() {
+    public String getOutputFileName() {
         return outFileName;
     }
+
+    @Override
+    public void setInputFileName(String fileName) {
+        this.inFileName = fileName;
+    }
+
+    @Override
+    public  void setOutputFileName(String fileName) {
+        this.outFileName = fileName;
+    }
+
 }

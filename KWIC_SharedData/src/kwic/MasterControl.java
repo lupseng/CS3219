@@ -10,22 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collections;
 
 public class MasterControl {
-    private static ArrayList<String> titles = new ArrayList<>();
-    private static ArrayList<String> wordsToIgnore = new ArrayList<>(); // all lower case
-    private static ArrayList<String> kwic = new ArrayList<>();
-    private static String inFileName = "Input.txt"; // Default fileName
-    private static String outFileName = "Output.txt"; // Default fileName
+    private static DataStorageInterface<String> dataStorage = new DataStorage();
 
     public static void main(String[] args) {
         try {
-            input((args.length > 0) ? args[0] : inFileName);
+            input((args.length > 0) ? args[0] : dataStorage.getDefaultInputFileName());
             circularShift();
             alphabetizer();
-            output((args.length > 1) ? args[1] : outFileName);
+            output((args.length > 1) ? args[1] : dataStorage.getDefaultOutputFileName());
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -52,9 +47,9 @@ public class MasterControl {
                 if (line.isEmpty()) {
                     changeArray = !changeArray;
                 } else if (changeArray) {
-                    wordsToIgnore.add(line.toLowerCase()); // case insensitive
+                    dataStorage.addWordsToIgnore(line.toLowerCase()); // case insensitive
                 } else {
-                    titles.add(line);
+                    dataStorage.addTitle(line);
                 }
             }
 
@@ -72,14 +67,14 @@ public class MasterControl {
      * is the start of its own line.
      */
     private static void circularShift() {
-        for (String title : titles) {
+        for (String title : dataStorage.getTitles()) {
             String[] words = title.split(" ");
 
             for (String word : words) {
-                if (!wordsToIgnore.contains(word.toLowerCase())) {
+                if (!dataStorage.getWordsToIgnore().contains(word.toLowerCase())) {
                     // keyword found
                     int index = title.indexOf(word);
-                    kwic.add(title.substring(index).concat(" ").concat(title.substring(0, index)));
+                    dataStorage.addShiftedWord(title.substring(index).concat(" ").concat(title.substring(0, index)));
                 }
             }
         }
@@ -90,7 +85,7 @@ public class MasterControl {
      * sorts kwic alphabetically.
      */
     private static void alphabetizer() {
-        Collections.sort(kwic, String.CASE_INSENSITIVE_ORDER);
+        Collections.sort(dataStorage.getShiftedWords(), String.CASE_INSENSITIVE_ORDER);
     }
 
     /**
@@ -109,7 +104,7 @@ public class MasterControl {
             FileWriter fileWriter = new FileWriter(file.getAbsoluteFile(), false);
             BufferedWriter writer = new BufferedWriter(fileWriter);
 
-            for (String s : kwic) {
+            for (String s : dataStorage.getShiftedWords()) {
                 writer.write(s);
                 writer.newLine();
                 System.out.println(s);

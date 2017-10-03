@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public abstract class DocumentOwner {
 
     protected ArrayList<Document> docs = new ArrayList<>();
+
     public void addDocument(Document doc){
         this.docs.add(doc);
     }

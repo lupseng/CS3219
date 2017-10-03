@@ -7,10 +7,10 @@ import java.util.Set;
 public class Document {
     private Set<Author> authors;// diff spellings of same person?
     private ArrayList<Citation> cites;
-    private Conference conference;
-    private Year year;
+    private String con;
+    private int year;
 
-    public Document(Conference conference, Year year) {
+    public Document(String conference, int year) {
         this.setConference(conference);
         this.setYear(year);
         this.authors = new HashSet<>();
@@ -30,19 +30,19 @@ public class Document {
         return unique.size();
     }
 
-    public Conference getConference() {
-        return conference;
+    public String getConference() {
+        return con;
     }
 
-    public void setConference(Conference conference) {
-        this.conference = conference;
+    public void setConference(String con) {
+        this.con = con;
     }
 
-    public Year getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(Year year) {
+    public void setYear(int year) {
         this.year = year;
     }
 

@@ -35,7 +35,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfDocuments() {
+    public int getNumDocuments() {
         int count = 0;
         for(Conference c : cons){
             count += c.getNumDocuments();
@@ -44,7 +44,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfDocuments(int year) {
+    public int getNumDocuments(int year) {
         for(Year y : years){
             if(y.getValue() == year){
                 return y.getNumDocuments();
@@ -54,7 +54,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfDocuments(String conName) {
+    public int getNumDocuments(String conName) {
         for(Conference c : cons){
             if(c.getName().equals(conName)){
                 return c.getNumDocuments();
@@ -64,7 +64,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfCitations() {
+    public int getNumCitations() {
         int count = 0;
         for(Conference c : cons){
             count += c.getNumCites();
@@ -73,7 +73,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfCitations(int year) {
+    public int getNumCitations(int year) {
         for(Year y : years){
             if(y.getValue() == year){
                 return y.getNumCites();
@@ -83,7 +83,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfCitations(String conName) {
+    public int getNumCitations(String conName) {
         for(Conference c : cons){
             if(c.getName().equals(conName)){
                 return c.getNumCites();
@@ -93,7 +93,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfCitations(String citer, int year) {
+    public int getNumCitations(String citer, int year) {
         for(Conference c : cons){
             if(c.getName().equals(citer)){
                 return c.getNumTimesYearCited(year);
@@ -103,7 +103,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfCitations(String citer, String cited) {
+    public int getNumCitations(String citer, String cited) {
         for(Conference c : cons){
             if(c.getName().equals(citer)){
                 return c.getNumTimesConCited(cited);
@@ -113,7 +113,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfUniqueCitations() {
+    public int getNumUniqueCitations() {
         int count = 0;
         for(Conference c : cons){
             count += c.getNumUniqueCites();
@@ -122,7 +122,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfUniqueCitations(int year) {
+    public int getNumUniqueCitations(int year) {
         for(Year y : years){
             if(y.getValue() == year){
                 return y.getNumUniqueCites();
@@ -132,7 +132,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfUniqueCitations(String conName) {
+    public int getNumUniqueCitations(String conName) {
         for(Conference c : cons){
             if(c.getName().equals(conName)){
                 return c.getNumUniqueCites();
@@ -142,7 +142,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfAuthors() {
+    public int getNumAuthors() {
         int count = 0;
         for(Conference c : cons){
             count += c.getNumAuthors();
@@ -151,7 +151,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfAuthors(int year) {
+    public int getNumAuthors(int year) {
         for(Year y : years){
             if(y.getValue() == year){
                 return y.getNumAuthors();
@@ -161,7 +161,7 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getNumOfAuthors(String conName) {
+    public int getNumAuthors(String conName) {
         for(Conference c : cons){
             if(c.getName().equals(conName)){
                 return c.getNumAuthors();

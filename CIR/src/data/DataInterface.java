@@ -3,24 +3,24 @@ package data;
 import java.util.ArrayList;
 
 public interface DataInterface {
-    public int getNumOfDocuments();
-    public int getNumOfDocuments(int year);
-    public int getNumOfDocuments(String conName);
+    public int getNumDocuments();
+    public int getNumDocuments(int year);
+    public int getNumDocuments(String conName);
 
-    public int getNumOfCitations();
-    public int getNumOfCitations(int year);
-    public int getNumOfCitations(String conName);
+    public int getNumCitations();
+    public int getNumCitations(int year);
+    public int getNumCitations(String conName);
 
-    public int getNumOfCitations(String citer, int year);
-    public int getNumOfCitations(String citer, String cited);
+    public int getNumCitations(String citer, int year);
+    public int getNumCitations(String citer, String cited);
 
-    public int getNumOfUniqueCitations();
-    public int getNumOfUniqueCitations(int year);
-    public int getNumOfUniqueCitations(String conName);
+    public int getNumUniqueCitations();
+    public int getNumUniqueCitations(int year);
+    public int getNumUniqueCitations(String conName);
 
-    public int getNumOfAuthors();
-    public int getNumOfAuthors(int year);
-    public int getNumOfAuthors(String conName);
+    public int getNumAuthors();
+    public int getNumAuthors(int year);
+    public int getNumAuthors(String conName);
 
     public ArrayList<String> getAuthorNames();
     public ArrayList<String> getAuthorNames(int year);

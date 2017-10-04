@@ -1,12 +1,14 @@
 package data;
 
+import java.util.ArrayList;
+
 public class Citation {
 
     private String conferenceName;
-    private String authorName;
+    private ArrayList<String> authorNames;
     private int year;
 
-    public Citation(String conferenceName, String authorName, int year) {
+    public Citation(String conferenceName, ArrayList<String> authorName, int year) {
         this.setConferenceName(conferenceName);
         this.setAuthorName(authorName);
         this.setYear(year);
@@ -20,12 +22,13 @@ public class Citation {
         this.conferenceName = conferenceName;
     }
 
-    public String getAuthorName() {
-        return authorName;
+    public ArrayList<String> getAuthorNames() {
+        return authorNames;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthorName(ArrayList<String> authorName) {
+        authorName.sort(String::compareToIgnoreCase);
+        this.authorNames = authorName;
     }
 
     public int getYear() {
@@ -46,7 +49,7 @@ public class Citation {
         }
         Citation otherCitation = (Citation) other;
         if(this.conferenceName.equals(otherCitation.getConferenceName())
-                && this.authorName.equals(otherCitation.getAuthorName())
+                && this.authorNames.equals(otherCitation.getAuthorNames())
                 && this.year == otherCitation.getYear()){
             return true;
         }else{
@@ -56,6 +59,6 @@ public class Citation {
 
     @Override
     public int hashCode() {
-        return 31 * this.getConferenceName().hashCode() + this.getAuthorName().hashCode() + this.getYear();
+        return 31 * this.getConferenceName().hashCode() + this.getAuthorNames().hashCode() + this.getYear();
     }
 }

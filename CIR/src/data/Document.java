@@ -50,7 +50,7 @@ public class Document {
         this.authors.add(new Author(name));
     }
 
-    public void addCite(String conferenceName, String authorName, int year) {
+    public void addCite(String conferenceName, ArrayList<String> authorName, int year) {
         this.cites.add(new Citation(conferenceName, authorName, year));
     }
 
@@ -67,8 +67,10 @@ public class Document {
     public int getNumTimesAuthorCited(String authorName) {
         int count = 0;
         for (Citation cite : cites) {
-            if (cite.getAuthorName().equals(authorName)) {
-                count++;
+            for(String name : cite.getAuthorNames()){
+                if (name.equals(authorName)) {
+                    count++;
+                }
             }
         }
         return count;

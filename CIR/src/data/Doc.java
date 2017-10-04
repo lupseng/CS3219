@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Document {
+public class Doc {
     private Set<Author> authors;// diff spellings of same person?
     private ArrayList<Citation> cites;
     private String con;
-    private int year;
+    private int year;//format 2 digits
 
-    public Document(String conference, int year) {
-        this.setConference(conference);
+    public Doc(String conName, int year) {
+        this.setConference(conName);
         this.setYear(year);
         this.authors = new HashSet<>();
         this.cites = new ArrayList<>();

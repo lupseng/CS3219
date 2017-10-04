@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Conference {
-    private Map<Integer, ArrayList<Document>> data;
+    //Year format is 2 digits
+    private Map<Integer, ArrayList<Doc>> data;
     private String name;
     private int oldestYear;
     private int newestYear;
@@ -26,11 +27,11 @@ public class Conference {
         this.name = name;
     }
 
-    public void addDocument(int year, Document doc) {
+    public void addDocument(int year, Doc doc) {
         if (this.data.containsKey(year)) {
             this.data.get(year).add(doc);
         } else {
-            ArrayList<Document> docs = new ArrayList<>();
+            ArrayList<Doc> docs = new ArrayList<>();
             docs.add(doc);
             this.data.put(year, docs);
 
@@ -50,7 +51,7 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
             count += docs.size();
             // it.remove(); // avoids a ConcurrentModificationException
         }
@@ -71,8 +72,8 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 numAuthors += doc.getNumAuthors();
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -83,8 +84,8 @@ public class Conference {
     public int getNumAuthors(int year) {
         int numAuthors = 0;
         if (this.data.containsKey(year)) {
-            ArrayList<Document> docs = this.data.get(year);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(year);
+            for (Doc doc : docs) {
                 numAuthors += doc.getNumAuthors();
             }
         }
@@ -97,8 +98,8 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 numCites += doc.getNumCites();
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -109,8 +110,8 @@ public class Conference {
     public int getNumCites(int year) {
         int numCites = 0;
         if (this.data.containsKey(year)) {
-            ArrayList<Document> docs = this.data.get(year);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(year);
+            for (Doc doc : docs) {
                 numCites += doc.getNumCites();
             }
         }
@@ -123,8 +124,8 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 numCites += doc.getNumUniqueCites();
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -135,8 +136,8 @@ public class Conference {
     public int getNumUniqueCites(int year) {
         int numCites = 0;
         if (this.data.containsKey(year)) {
-            ArrayList<Document> docs = this.data.get(year);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(year);
+            for (Doc doc : docs) {
                 numCites += doc.getNumUniqueCites();
             }
         }
@@ -149,8 +150,8 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 num += doc.getNumTimesAuthorCited(authorName);
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -161,8 +162,8 @@ public class Conference {
     public int getNumTimesAuthorCited(String authorName, int citerYear) {
         int num = 0;
         if (this.data.containsKey(citerYear)) {
-            ArrayList<Document> docs = this.data.get(citerYear);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(citerYear);
+            for (Doc doc : docs) {
                 num += doc.getNumTimesAuthorCited(authorName);
             }
         }
@@ -176,8 +177,8 @@ public class Conference {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             // System.out.println(pair.getKey() + " = " + pair.getValue());
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 count += doc.getNumTimesYearCited(year);
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -188,8 +189,8 @@ public class Conference {
     public int getNumTimesYearCited(int citerYear, int citedYear) {
         int count = 0;
         if (this.data.containsKey(citerYear)) {
-            ArrayList<Document> docs = this.data.get(citerYear);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(citerYear);
+            for (Doc doc : docs) {
                 count += doc.getNumTimesYearCited(citedYear);
             }
         }
@@ -202,8 +203,8 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 count += doc.getNumTimesConCited(con);
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -214,8 +215,8 @@ public class Conference {
     public int getNumTimesConCited(int citerYear, String con) {
         int count = 0;
         if (this.data.containsKey(citerYear)) {
-            ArrayList<Document> docs = this.data.get(citerYear);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(citerYear);
+            for (Doc doc : docs) {
                 count += doc.getNumTimesConCited(con);
             }
         }
@@ -228,8 +229,8 @@ public class Conference {
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            ArrayList<Document> docs = (ArrayList<Document>) pair.getValue();
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
                 toReturn.addAll(doc.getAuthorNames());
             }
             // it.remove(); // avoids a ConcurrentModificationException
@@ -241,8 +242,8 @@ public class Conference {
         ArrayList<String> toReturn = new ArrayList<>();
         int num = 0;
         if (this.data.containsKey(year)) {
-            ArrayList<Document> docs = this.data.get(year);
-            for (Document doc : docs) {
+            ArrayList<Doc> docs = this.data.get(year);
+            for (Doc doc : docs) {
                 toReturn.addAll(doc.getAuthorNames());
             }
         }

@@ -6,7 +6,7 @@ public class Citation {
 
     private String conferenceName;
     private ArrayList<String> authorNames;
-    private int year;
+    private int year;//format 4 digits
 
     public Citation(String conferenceName, ArrayList<String> authorName, int year) {
         this.setConferenceName(conferenceName);

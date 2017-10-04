@@ -95,4 +95,20 @@ public class Doc {
         }
         return count;
     }
+
+    public int getOldestCitationYear(){
+        int oldestYear = Integer.MAX_VALUE;
+        for (Citation cite: cites) {
+            oldestYear = Integer.min(oldestYear, cite.getYear());
+        }
+        return oldestYear;
+    }
+
+    public int getNewestCitationYear() {
+        int newestYear = Integer.MIN_VALUE;
+        for (Citation cite: cites) {
+            newestYear = Integer.max(newestYear, cite.getYear());
+        }
+        return newestYear;
+    }
 }

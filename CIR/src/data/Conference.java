@@ -9,14 +9,10 @@ public class Conference {
     //Year format is 2 digits
     private Map<Integer, ArrayList<Doc>> data;
     private String name;
-    private int oldestYear;
-    private int newestYear;
 
     public Conference(String name) {
         this.data = new HashMap<>();
         this.setName(name);
-        this.oldestYear = Integer.MAX_VALUE;
-        this.newestYear = Integer.MIN_VALUE;
     }
 
     public String getName() {
@@ -34,14 +30,6 @@ public class Conference {
             ArrayList<Doc> docs = new ArrayList<>();
             docs.add(doc);
             this.data.put(year, docs);
-
-            if (year > this.newestYear) {
-                this.newestYear = year;
-            }
-
-            if (year < this.oldestYear) {
-                this.oldestYear = year;
-            }
         }
     }
 
@@ -250,11 +238,31 @@ public class Conference {
         return toReturn;
     }
 
-    public int getOldestYear() {
-        return this.oldestYear;
+    public int getOldestCitationYear() {
+        int oldestYear = Integer.MAX_VALUE;
+        Iterator it = data.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
+                oldestYear = Integer.min(oldestYear, doc.getOldestCitationYear());
+            }
+            // it.remove(); // avoids a ConcurrentModificationException
+        }
+        return oldestYear;
     }
 
-    public int getNewestYear() {
-        return this.newestYear;
+    public int getNewestCitationYear() {
+        int newestYear = Integer.MIN_VALUE;
+        Iterator it = data.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            ArrayList<Doc> docs = (ArrayList<Doc>) pair.getValue();
+            for (Doc doc : docs) {
+                newestYear = Integer.max(newestYear, doc.getNewestCitationYear());
+            }
+            // it.remove(); // avoids a ConcurrentModificationException
+        }
+        return newestYear;
     }
 }

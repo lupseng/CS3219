@@ -267,20 +267,20 @@ public class DataManager implements DataInterface {
     }
 
     @Override
-    public int getOldestYear() {
+    public int getOldestCitationYear() {
         int oldestYear = Integer.MAX_VALUE;
         for (Conference c : cons) {
-            oldestYear = Integer.min(oldestYear, c.getOldestYear());
+            oldestYear = Integer.min(oldestYear, c.getOldestCitationYear());
         }
         return oldestYear;
     }
 
     @Override
-    public int getNewestYear() {
+    public int getNewestCitationYear() {
         int newestYear = Integer.MIN_VALUE;
 
         for (Conference c : cons) {
-            newestYear = Integer.max(newestYear, c.getNewestYear());
+            newestYear = Integer.max(newestYear, c.getNewestCitationYear());
         }
         return newestYear;
     }

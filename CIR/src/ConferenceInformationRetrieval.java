@@ -1,16 +1,20 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.parsers.DocumentBuilderFactory;
+
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class ConferenceInformationRetrieval {
     //public static final String xml = "(0x0)";
@@ -51,44 +55,7 @@ public class ConferenceInformationRetrieval {
 
                     if (builder != null) { //END of Document
                         String data = "".concat(builder + m.group(2) + "\n</root>\n");
-                        doc = dBuilder.parse(new InputSource(new StringReader(data)));
-
-                        doc.getDocumentElement().normalize();
-                        //System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-                        NodeList nList = doc.getElementsByTagName("citation"); // change this element to obtain information that you want
-
-                        for (int index = 0; index < nList.getLength(); index++) {
-                            Node nNode = nList.item(index);
-                            Element element = (Element) nNode;
-                            //System.out.println("\nCurrent Element :" + nNode.getAttributes().getNamedItem("valid").getTextContent()); //to print valid or invalid citations
-                            //System.out.println("\nCurrent Element :" + nNode.getTextContent()); // to print information on element/tag
-                            if(element.getAttributes().getNamedItem("valid").getTextContent().equals("true")) {
-
-                                //Question 7
-                                //System.out.println(element.getElementsByTagName("booktitle").getLength());
-//                                if(element.getElementsByTagName("booktitle").getLength() > 0) {
-//                                    if(element.getElementsByTagName("booktitle").item(0).getTextContent().contains("EMNLP")
-//                                            | element.getElementsByTagName("booktitle").item(0).getTextContent().contains("CoNLL")) {
-//                                        System.out.println("\nDate :" + element.getElementsByTagName("date").item(0).getTextContent());
-//                                    }
-//                                }
-
-                                // Question 6
-                                //System.out.println("\nDate :" + element.getElementsByTagName("date").item(0).getTextContent()); // to print date of cited documents
-
-                                // Question 8
-                                if(element.getElementsByTagName("author").getLength() > 0) {
-                                    for(int author = 0 ; author < element.getElementsByTagName("author").getLength() ; author++) {
-                                        if(element.getElementsByTagName("author").item(author).getTextContent().equals("Yoshua Bengio")
-                                                | element.getElementsByTagName("author").item(author).getTextContent().equals("Y. Bengio")) {
-                                            System.out.println("\nCurrent Element :" + nNode.getTextContent());
-                                        }
-                                    }
-                                }
-                            }
-                            //System.out.println("\nCurrent Element :" + nNode.getNodeName()); // to print information on element/tag Name
-
-                        }
+                        parseDocument(dBuilder, data);
                     }
 
                     doc = null;
@@ -113,21 +80,29 @@ public class ConferenceInformationRetrieval {
             ///////////////////////////////////////////////////parse LAST Document, Code same as top half/////////////////////////////////////////////
 
             String data = "".concat(builder + "</root>\n");
-            doc = dBuilder.parse(new InputSource(new StringReader(data)));
+            parseDocument(dBuilder, data);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-            doc.getDocumentElement().normalize();
-            //System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-            NodeList nList = doc.getElementsByTagName("citation"); // change this element to obtain information that you want
+    private void parseDocument(DocumentBuilder dBuilder, String data) throws SAXException, IOException {
+        Document doc;
+        doc = dBuilder.parse(new InputSource(new StringReader(data)));
 
-            for (int index = 0; index < nList.getLength(); index++) {
-                Node nNode = nList.item(index);
-                Element element = (Element) nNode;
-                //System.out.println("\nCurrent Element :" + nNode.getAttributes().getNamedItem("valid").getTextContent()); //to print valid or invalid citations
-                //System.out.println("\nCurrent Element :" + nNode.getTextContent()); // to print information on element/tag
-                if(element.getAttributes().getNamedItem("valid").getTextContent().equals("true")) {
+        doc.getDocumentElement().normalize();
+        //System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+        NodeList nList = doc.getElementsByTagName("citation"); // change this element to obtain information that you want
 
-                    //Question 7
-                    //System.out.println(element.getElementsByTagName("booktitle").getLength());
+        for (int index = 0; index < nList.getLength(); index++) {
+            Node nNode = nList.item(index);
+            Element element = (Element) nNode;
+            //System.out.println("\nCurrent Element :" + nNode.getAttributes().getNamedItem("valid").getTextContent()); //to print valid or invalid citations
+            //System.out.println("\nCurrent Element :" + nNode.getTextContent()); // to print information on element/tag
+            if(element.getAttributes().getNamedItem("valid").getTextContent().equals("true")) {
+
+                //Question 7
+                //System.out.println(element.getElementsByTagName("booktitle").getLength());
 //                                if(element.getElementsByTagName("booktitle").getLength() > 0) {
 //                                    if(element.getElementsByTagName("booktitle").item(0).getTextContent().contains("EMNLP")
 //                                            | element.getElementsByTagName("booktitle").item(0).getTextContent().contains("CoNLL")) {
@@ -135,24 +110,21 @@ public class ConferenceInformationRetrieval {
 //                                    }
 //                                }
 
-                    // Question 6
-                    //System.out.println("\nDate :" + element.getElementsByTagName("date").item(0).getTextContent()); // to print date of cited documents
+                // Question 6
+                //System.out.println("\nDate :" + element.getElementsByTagName("date").item(0).getTextContent()); // to print date of cited documents
 
-                    // Question 8
-                    if(element.getElementsByTagName("author").getLength() > 0) {
-                        for(int author = 0 ; author < element.getElementsByTagName("author").getLength() ; author++) {
-                            if(element.getElementsByTagName("author").item(author).getTextContent().equals("Yoshua Bengio")
-                                    | element.getElementsByTagName("author").item(author).getTextContent().equals("Y. Bengio")) {
-                                System.out.println("\nCurrent Element :" + nNode.getTextContent());
-                            }
+                // Question 8
+                if(element.getElementsByTagName("author").getLength() > 0) {
+                    for(int author = 0 ; author < element.getElementsByTagName("author").getLength() ; author++) {
+                        if(element.getElementsByTagName("author").item(author).getTextContent().equals("Yoshua Bengio")
+                                | element.getElementsByTagName("author").item(author).getTextContent().equals("Y. Bengio")) {
+                            System.out.println("\nCurrent Element :" + nNode.getTextContent());
                         }
                     }
                 }
-                //System.out.println("\nCurrent Element :" + nNode.getNodeName()); // to print information on element/tag Name
-
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            //System.out.println("\nCurrent Element :" + nNode.getNodeName()); // to print information on element/tag Name
+
         }
     }
 }

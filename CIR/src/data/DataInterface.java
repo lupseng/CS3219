@@ -36,7 +36,7 @@ public interface DataInterface {
     public int getNumTimesCited(String authorName, String conName);
     public int getNumTimesCited(String authorName, String conName, int year);
 
-    public int getOldestYear();
-    public int getNewestYear();
+    public int getOldestCitationYear();
+    public int getNewestCitationYear();
 
 }

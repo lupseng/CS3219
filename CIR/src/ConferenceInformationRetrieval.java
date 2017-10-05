@@ -23,11 +23,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import data.Citation;
-import data.Doc;
 
 public class ConferenceInformationRetrieval {
-    //public static final String xml = "(0x0)";
-    public static final String xmlParser = "((</algorithms>)?(.*)(?<protocol><\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>)(.*))"; //(?<protocol><?xml version="1.0" encoding="UTF-8"?>)
+    // public static final String xml = "(0x0)";
+    public static final String xmlParser = "((</algorithms>)?(.*)(?<protocol><\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>)(.*))"; // (?<protocol><?xml
+                                                                                                                                    // version="1.0"
+                                                                                                                                    // encoding="UTF-8"?>)
     public static Set<Citation> uniqueCites = new HashSet<>();
     public static Set<String> uniqueAuthors = new HashSet<>();
     public static int numCites = 0;
@@ -37,52 +38,53 @@ public class ConferenceInformationRetrieval {
     public static Map<Integer, Integer> yearMap = new HashMap<>();
     public static Map<Integer, Integer> yearMapQ8 = new HashMap<>();
     public static Map<String, Integer> conMap = new HashMap<>();
+
     public static void main(String[] arg) {
         ConferenceInformationRetrieval cir = new ConferenceInformationRetrieval();
 
-        cir.process("D12");
-        cir.process("D13");
-       cir.process("D14");
-       cir.process("D15");
-       cir.process("J14");
-       cir.process("Q14");
-       cir.process("W14");
-        System.out.println("total docs = "+numDocs);
-        System.out.println("total cites = "+numCites);
-        System.out.println("unique cites = "+uniqueCites.size());
-        System.out.println("unique authors = "+uniqueAuthors.size());
-        System.out.println("oldestYear = "+oldestYear);
-        System.out.println("newestYear = "+newestYear);
+        cir.process("Q14");
+        System.out.println("total docs = " + numDocs);
+        System.out.println("total cites = " + numCites);
+        System.out.println("unique cites = " + uniqueCites.size());
+        System.out.println("unique authors = " + uniqueAuthors.size());
+        System.out.println("oldestYear = " + oldestYear);
+        System.out.println("newestYear = " + newestYear);
+
+        //Q7, 10
+        Iterator it = conMap.entrySet().iterator();
+        while (it.hasNext()) {
+        Map.Entry pair =       (Map.Entry) it.next();
+
+        System.out.println(pair.getKey() +" "+ pair.getValue()+" ");
+         }
         /*
-      
-  
-        //Q6, 9
+
+
+          cir.process("D13");
+          cir.process("D14");
+          cir.process("D15");
+          cir.process("J14");
+          cir.process("Q14");
+          cir.process("W14");
+    // Q6, 9
         Iterator it = yearMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
 
-            System.out.println(pair.getKey() +" "+ pair.getValue()+" ");
-            // it.remove(); // avoids a ConcurrentModificationException
+            System.out.println(pair.getKey() + " " + pair.getValue() + " ");
         }
-        
-        //Q7, 10
-        Iterator it = conMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
 
-            System.out.println(pair.getKey() +" "+ pair.getValue()+" ");
-            // it.remove(); // avoids a ConcurrentModificationException
-        }
-        */
 
-        //Q8
+
+        // Q8
         Iterator it = yearMapQ8.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
 
-            System.out.println(pair.getKey() +" "+ pair.getValue()+" ");
-            // it.remove(); // avoids a ConcurrentModificationException
+            System.out.println(pair.getKey() + " " + pair.getValue() + " ");
         }
+         */
+
         return;
     }
 
@@ -98,22 +100,22 @@ public class ConferenceInformationRetrieval {
             int count = 1;
             for (String line; (line = reader.readLine()) != null;) {
 
-                //Handle 0x0 invalid char in xml
+                // Handle 0x0 invalid char in xml
                 Pattern pattern = Pattern.compile("[\\000]+");
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
                     line = matcher.replaceAll("");
                 }
 
-                //handling each xml
-                if (line.contains("<?xml")) { //START of Document
+                // handling each xml
+                if (line.contains("<?xml")) { // START of Document
                     Pattern p = Pattern.compile(xmlParser);
                     Matcher m = p.matcher(line);
-                    //System.out.println(line); // displays the fileName
-                    //System.out.println(count++); //count numOfDocuments
-                    m.find(); //assume true
+                    // System.out.println(line); // displays the fileName
+                    // System.out.println(count++); //count numOfDocuments
+                    m.find(); // assume true
 
-                    if (builder != null) { //END of Document
+                    if (builder != null) { // END of Document
                         String data = "".concat(builder + m.group(2) + "\n</root>\n");
                         parseDocument(dBuilder, data);
                     }
@@ -123,21 +125,23 @@ public class ConferenceInformationRetrieval {
                     builder.append(m.group("protocol") + "\n" + "<root>\n");
                     line = "";
 
-                    //Handling invalid characters in xml files
-                } else if (line.contains("<surname>")){
+                    // Handling invalid characters in xml files
+                } else if (line.contains("<surname>")) {
                     int index = line.indexOf("<surname>");
                     line = line.substring(0, index) + "&lt;surname&gt;" + line.substring(index + 9);
-                } else if (line.contains("<markus.kreuzthaler,stefan.schulz>")){
+                } else if (line.contains("<markus.kreuzthaler,stefan.schulz>")) {
                     int index = line.indexOf("<markus.kreuzthaler,stefan.schulz>");
-                    line = line.substring(0, index) + "&lt;markus.kreuzthaler,stefan.schulz&gt;" + line.substring(index + 34);
-                }else if (line.contains("<firstName>.<lastName>")) {
+                    line = line.substring(0, index) + "&lt;markus.kreuzthaler,stefan.schulz&gt;"
+                            + line.substring(index + 34);
+                } else if (line.contains("<firstName>.<lastName>")) {
                     int index = line.indexOf("<firstName>.<lastName>");
                     line = line.substring(0, index) + "&lt;firstName&gt;.&lt;lastName&gt;" + line.substring(index + 22);
                 }
                 builder.append(line + "\n");
             }
 
-            ///////////////////////////////////////////////////parse LAST Document, Code same as top half/////////////////////////////////////////////
+            /////////////////////////////////////////////////// parse LAST Document, Code same as top
+            /////////////////////////////////////////////////// half/////////////////////////////////////////////
 
             String data = "".concat(builder + "</root>\n");
             parseDocument(dBuilder, data);
@@ -152,136 +156,156 @@ public class ConferenceInformationRetrieval {
         doc = dBuilder.parse(new InputSource(new StringReader(data)));
 
         doc.getDocumentElement().normalize();
-        //System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-        NodeList algoList = doc.getElementsByTagName("algorithm"); // change this element to obtain information that you want
+        // System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+        NodeList algoList = doc.getElementsByTagName("algorithm"); // change this element to obtain
+                                                                   // information that you want
         Node node1 = algoList.item(0);
-       
-        Element ele1 = (Element)node1;
+
+        Element ele1 = (Element) node1;
         NodeList titleList1 = ele1.getElementsByTagName("title");
-    
-        
-        NodeList nList = doc.getElementsByTagName("citation"); // change this element to obtain information that you want
+
+        NodeList nList = doc.getElementsByTagName("citation"); // change this element to obtain information
+                                                               // that you want
 
         for (int index = 0; index < nList.getLength(); index++) {
             Node nNode = nList.item(index);
             Element element = (Element) nNode;
-            //System.out.println("\nCurrent Element :" + nNode.getAttributes().getNamedItem("valid").getTextContent()); //to print valid or invalid citations
-            //System.out.println("\nCurrent Element :" + nNode.getTextContent()); // to print information on element/tag
-            if(element.getAttributes().getNamedItem("valid").getTextContent().equals("true")) {
+            // System.out.println("\nCurrent Element :" +
+            // nNode.getAttributes().getNamedItem("valid").getTextContent()); //to print valid or invalid
+            // citations
+            // System.out.println("\nCurrent Element :" + nNode.getTextContent()); // to print information on
+            // element/tag
+            if (element.getAttribute("valid").equals("true")) {
                 String citeTitle = "";
                 String authorName = "";
                 ArrayList<String> authors = new ArrayList<>();
                 int date = 0;
                 Citation cite;
-                if(element.getElementsByTagName("title").getLength() > 0) {
+
+                if (element.getElementsByTagName("title").getLength() > 0) {
                     citeTitle = element.getElementsByTagName("title").item(0).getTextContent();
-                  //  System.out.println(citeTitle);
-                }else{
-                    //no title tag
-                  //  continue;
+                    // System.out.println(citeTitle);
+                } else {
+                    // no title tag
+                    // continue;
                 }
 
-                if(element.getElementsByTagName("date").getLength() > 0) {
-                    try{
-                    date = Integer.parseInt(element.getElementsByTagName("date").item(0).getTextContent());
-             
-                    oldestYear = Integer.min(oldestYear, date);
-                    newestYear = Integer.max(newestYear, date);
-                    
-                    if(yearMap.containsKey(date)){
-                        int value = yearMap.get(date) + 1;
-                        yearMap.put(date, value);
-                    }else{
-                        yearMap.put(date, 1);
+                if (element.getElementsByTagName("date").getLength() > 0) {
+                    try {
+                        date = Integer.parseInt(element.getElementsByTagName("date").item(0).getTextContent());
+
+                    } catch (java.lang.NumberFormatException ex) {
+
                     }
-                   // System.out.println(date);
-                    }catch(java.lang.NumberFormatException ex){
-                        
-                    }
-                    
+
                 }
-                
-                if(element.getElementsByTagName("author").getLength() > 0) {
-                    for(int i = 0; i < element.getElementsByTagName("author").getLength(); i++){
+
+                if (element.getElementsByTagName("author").getLength() > 0) {
+                    for (int i = 0; i < element.getElementsByTagName("author").getLength(); i++) {
+
+                        if (!element.getAttribute("confidence").isEmpty()) {
+                            System.out.println(authorName);
+                            int confidence = Integer.parseInt(element.getAttribute("confidence"));
+                            if (confidence < 0.9) {
+                                continue;
+                            }
+                        }
 
                         authorName = element.getElementsByTagName("author").item(i).getTextContent();
                         uniqueAuthors.add(authorName);
                         authors.add(authorName);
-//                        / System.out.println(authorName);
-                        
-                        if(authorName.trim().toLowerCase().equals("yoshua bengio")
+                        // / System.out.println(authorName);
+
+                        if (authorName.trim().toLowerCase().equals("yoshua bengio")
                                 || authorName.trim().toLowerCase().equals("y. bengio")
                                 || authorName.trim().toLowerCase().equals("yoshua b.")) {
-                           
-                            if(yearMapQ8.containsKey(date)){
+
+                            if (yearMapQ8.containsKey(date)) {
                                 int value = yearMapQ8.get(date) + 1;
                                 yearMapQ8.put(date, value);
-                            }else{
-
+                            } else {
                                 yearMapQ8.put(date, 1);
                             }
                         }
-                    }   
+                    }
                 }
+                if (date != 0) {
+                    if (date != 1305 && date != 1411) {
+                        oldestYear = Integer.min(oldestYear, date);
+                    }
+                    newestYear = Integer.max(newestYear, date);
+
+                    if (yearMap.containsKey(date)) {
+                        int value = yearMap.get(date) + 1;
+                        yearMap.put(date, value);
+                    } else {
+                        yearMap.put(date, 1);
+                    }
+                }
+                // System.out.println(date);
 
                 cite = new Citation(citeTitle, authors, date);
                 numCites++;
                 uniqueCites.add(cite);
-                //Question 7
-                //System.out.println(element.getElementsByTagName("booktitle").getLength());
-                
-                                if(element.getElementsByTagName("booktitle").getLength() > 0) {
-                                    String conName = element.getElementsByTagName("booktitle").item(0).getTextContent();
-                                    
-                                    if(conName.trim().toLowerCase().contains("naacl") || conName.trim().toLowerCase().contains("north american chapter of the association for computational linguistics")){
-                                        if(conMap.containsKey("naacl")){
-                                            int value = conMap.get("naacl") + 1;
-                                            conMap.put("naacl", value);
-                                        }else{
-                                            conMap.put("naacl", 1);
-                                        }                                        
-                                    } 
-                                    if(conName.trim().toLowerCase().contains("conll") || conName.trim().toLowerCase().contains("conference on natural language learning")) {
-                                        if(conMap.containsKey("conll")){
-                                            int value = conMap.get("conll") + 1;
-                                            conMap.put("conll", value);
-                                        }else{
-                                            conMap.put("conll", 1);
-                                        }
-                                       // System.out.println(element.getElementsByTagName("booktitle").item(0).getTextContent());
-                                       // System.out.println("\nDate :" + element.getElementsByTagName("date").item(0).getTextContent());
-                                    }
-                                    if(conName.trim().toLowerCase().contains("emnlp") || conName.trim().toLowerCase().contains("empirical methods on natural language processing")){
-                                        if(conMap.containsKey("emnlp")){
-                                            int value = conMap.get("emnlp") + 1;
-                                            conMap.put("emnlp", value);
-                                        }else{
-                                            conMap.put("emnlp", 1);
-                                        }                                        
-                                    } 
-                                    /*
-                                  
-                                    
-                                    */
-                                }
+                // Question 7
+                // System.out.println(element.getElementsByTagName("booktitle").getLength());
 
-                                    
-                // Question 6
-                //System.out.println("\nDate :" + element.getElementsByTagName("date").item(0).getTextContent()); // to print date of cited documents
+                if (element.getElementsByTagName("booktitle").getLength() > 0) {
+                    String conName = element.getElementsByTagName("booktitle").item(0).getTextContent();
 
-                // Question 8
-                                /*
-                if(element.getElementsByTagName("author").getLength() > 0) {
-                    for(int author = 0 ; author < element.getElementsByTagName("author").getLength() ; author++) {
-                        if(element.getElementsByTagName("author").item(author).getTextContent().equals("Yoshua Bengio")
-                                | element.getElementsByTagName("author").item(author).getTextContent().equals("Y. Bengio")) {
-                            System.out.println("\nCurrent Element :" + nNode.getTextContent());
+                    if (conName.trim().toLowerCase().contains("naacl") || conName.trim().toLowerCase()
+                            .contains("north american chapter of the association for computational linguistics")) {
+                        if (conMap.containsKey("naacl")) {
+                            int value = conMap.get("naacl") + 1;
+                            conMap.put("naacl", value);
+                        } else {
+                            conMap.put("naacl", 1);
                         }
                     }
+                    if (conName.trim().toLowerCase().contains("conll")
+                            || conName.trim().toLowerCase().contains("conference on natural language learning")) {
+                        if (conMap.containsKey("conll")) {
+                            int value = conMap.get("conll") + 1;
+                            conMap.put("conll", value);
+                        } else {
+                            conMap.put("conll", 1);
+                        }
+                        // System.out.println(element.getElementsByTagName("booktitle").item(0).getTextContent());
+                        // System.out.println("\nDate :" +
+                        // element.getElementsByTagName("date").item(0).getTextContent());
+                    }
+                    if (conName.trim().toLowerCase().contains("emnlp") || conName.trim().toLowerCase()
+                            .contains("empirical methods on natural language processing")) {
+                        if (conMap.containsKey("emnlp")) {
+                            int value = conMap.get("emnlp") + 1;
+                            conMap.put("emnlp", value);
+                        } else {
+                            conMap.put("emnlp", 1);
+                        }
+                    }
+                    /*
+
+
+                    */
                 }
-                */
+
+                // Question 6
+                // System.out.println("\nDate :" +
+                // element.getElementsByTagName("date").item(0).getTextContent()); // to print date of cited
+                // documents
+
+                // Question 8
+                /*
+                 * if(element.getElementsByTagName("author").getLength() > 0) { for(int author = 0 ; author <
+                 * element.getElementsByTagName("author").getLength() ; author++) {
+                 * if(element.getElementsByTagName("author").item(author).getTextContent().
+                 * equals("Yoshua Bengio") |
+                 * element.getElementsByTagName("author").item(author).getTextContent().equals("Y. Bengio")) {
+                 * System.out.println("\nCurrent Element :" + nNode.getTextContent()); } } }
+                 */
             }
-            //System.out.println("\nCurrent Element :" + nNode.getNodeName()); // to print information on element/tag Name
+            // System.out.println("\nCurrent Element :" + nNode.getNodeName()); // to print information on
+            // element/tag Name
 
         }
     }

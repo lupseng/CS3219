@@ -58,7 +58,7 @@ public class Doc {
         ArrayList<String> toReturn = new ArrayList<>();
 
         for (Author a : authors) {
-            toReturn.add(a.getName());
+            toReturn.add(a.getName()[a.getName().length-1]);
         }
 
         return toReturn;

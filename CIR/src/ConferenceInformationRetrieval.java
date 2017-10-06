@@ -3,12 +3,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +44,10 @@ public class ConferenceInformationRetrieval {
         System.out.println("unique authors = " + uniqueAuthors.size());
         System.out.println("oldestYear = " + oldestYear);
         System.out.println("newestYear = " + newestYear);
+        System.out.println(cir.permute("Tang Di Feng")[0]);
+        System.out.println(cir.permute("Tang Di Feng")[1]);
+        System.out.println(cir.permute("Tang Di Feng")[2]);
+        System.out.println(cir.permute("Tang Di Feng")[3]);
 
         //Q7, 10
         Iterator it = conMap.entrySet().iterator();
@@ -308,5 +307,26 @@ public class ConferenceInformationRetrieval {
             // element/tag Name
 
         }
+    }
+
+    private String[] permute(String name) {
+        String[] splittedName = name.split(" ");
+        String[] finalForm = new String[splittedName.length + 1];
+        String formString = "";
+        for(int index = 0; index < splittedName.length; index++) {
+            String simplifiedForm = splittedName[index].substring(0, 1) + ".";
+            for(int indexMax = 0; indexMax < splittedName.length; indexMax++) {
+                if(index == indexMax) {
+                    formString += simplifiedForm;
+                } else {
+                    formString += splittedName[indexMax];
+                }
+                formString += " ";
+            }
+            finalForm[index] = formString;
+            formString = "";
+        }
+        finalForm[splittedName.length] = name;
+        return finalForm;
     }
 }

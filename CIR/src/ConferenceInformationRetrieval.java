@@ -3,7 +3,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,18 +42,25 @@ public class ConferenceInformationRetrieval {
     public static void main(String[] arg) {
         ConferenceInformationRetrieval cir = new ConferenceInformationRetrieval();
 
+        cir.process("D12");
+        cir.process("D13");
+        cir.process("D14");
+        cir.process("D15");
+        cir.process("J14");
         cir.process("Q14");
+        cir.process("W14");
         System.out.println("total docs = " + numDocs);
         System.out.println("total cites = " + numCites);
         System.out.println("unique cites = " + uniqueCites.size());
         System.out.println("unique authors = " + uniqueAuthors.size());
         System.out.println("oldestYear = " + oldestYear);
         System.out.println("newestYear = " + newestYear);
+/*
         System.out.println(cir.permute("Tang Di Feng")[0]);
         System.out.println(cir.permute("Tang Di Feng")[1]);
         System.out.println(cir.permute("Tang Di Feng")[2]);
         System.out.println(cir.permute("Tang Di Feng")[3]);
-
+*/
         //Q7, 10
         Iterator it = conMap.entrySet().iterator();
         while (it.hasNext()) {
@@ -56,15 +68,10 @@ public class ConferenceInformationRetrieval {
 
         System.out.println(pair.getKey() +" "+ pair.getValue()+" ");
          }
+
         /*
 
 
-          cir.process("D13");
-          cir.process("D14");
-          cir.process("D15");
-          cir.process("J14");
-          cir.process("Q14");
-          cir.process("W14");
     // Q6, 9
         Iterator it = yearMap.entrySet().iterator();
         while (it.hasNext()) {
@@ -72,6 +79,7 @@ public class ConferenceInformationRetrieval {
 
             System.out.println(pair.getKey() + " " + pair.getValue() + " ");
         }
+
 
 
 
@@ -182,7 +190,7 @@ public class ConferenceInformationRetrieval {
                 Citation cite;
 
                 if (element.getElementsByTagName("title").getLength() > 0) {
-                    citeTitle = element.getElementsByTagName("title").item(0).getTextContent();
+                    citeTitle = element.getElementsByTagName("title").item(0).getTextContent().trim().toLowerCase();
                     // System.out.println(citeTitle);
                 } else {
                     // no title tag
@@ -191,7 +199,7 @@ public class ConferenceInformationRetrieval {
 
                 if (element.getElementsByTagName("date").getLength() > 0) {
                     try {
-                        date = Integer.parseInt(element.getElementsByTagName("date").item(0).getTextContent());
+                        date = Integer.parseInt(element.getElementsByTagName("date").item(0).getTextContent().trim());
 
                     } catch (java.lang.NumberFormatException ex) {
 
@@ -203,21 +211,21 @@ public class ConferenceInformationRetrieval {
                     for (int i = 0; i < element.getElementsByTagName("author").getLength(); i++) {
 
                         if (!element.getAttribute("confidence").isEmpty()) {
-                            System.out.println(authorName);
+                            System.out.println(element.getElementsByTagName("author").item(i).getTextContent());
                             int confidence = Integer.parseInt(element.getAttribute("confidence"));
                             if (confidence < 0.9) {
                                 continue;
                             }
                         }
 
-                        authorName = element.getElementsByTagName("author").item(i).getTextContent();
+                        authorName = element.getElementsByTagName("author").item(i).getTextContent().trim().toLowerCase();
                         uniqueAuthors.add(authorName);
                         authors.add(authorName);
                         // / System.out.println(authorName);
 
-                        if (authorName.trim().toLowerCase().equals("yoshua bengio")
-                                || authorName.trim().toLowerCase().equals("y. bengio")
-                                || authorName.trim().toLowerCase().equals("yoshua b.")) {
+                        if (authorName.equals("yoshua bengio")
+                                || authorName.equals("y. bengio")
+                                || authorName.equals("yoshua b.")) {
 
                             if (yearMapQ8.containsKey(date)) {
                                 int value = yearMapQ8.get(date) + 1;
@@ -250,9 +258,9 @@ public class ConferenceInformationRetrieval {
                 // System.out.println(element.getElementsByTagName("booktitle").getLength());
 
                 if (element.getElementsByTagName("booktitle").getLength() > 0) {
-                    String conName = element.getElementsByTagName("booktitle").item(0).getTextContent();
+                    String conName = element.getElementsByTagName("booktitle").item(0).getTextContent().trim().toLowerCase();
 
-                    if (conName.trim().toLowerCase().contains("naacl") || conName.trim().toLowerCase()
+                    if (conName.contains("naacl") || conName
                             .contains("north american chapter of the association for computational linguistics")) {
                         if (conMap.containsKey("naacl")) {
                             int value = conMap.get("naacl") + 1;
@@ -261,8 +269,8 @@ public class ConferenceInformationRetrieval {
                             conMap.put("naacl", 1);
                         }
                     }
-                    if (conName.trim().toLowerCase().contains("conll")
-                            || conName.trim().toLowerCase().contains("conference on natural language learning")) {
+                    if (conName.contains("conll")
+                            || conName.contains("conference on natural language learning")) {
                         if (conMap.containsKey("conll")) {
                             int value = conMap.get("conll") + 1;
                             conMap.put("conll", value);
@@ -273,7 +281,7 @@ public class ConferenceInformationRetrieval {
                         // System.out.println("\nDate :" +
                         // element.getElementsByTagName("date").item(0).getTextContent());
                     }
-                    if (conName.trim().toLowerCase().contains("emnlp") || conName.trim().toLowerCase()
+                    if (conName.contains("emnlp") || conName
                             .contains("empirical methods on natural language processing")) {
                         if (conMap.containsKey("emnlp")) {
                             int value = conMap.get("emnlp") + 1;
@@ -282,29 +290,11 @@ public class ConferenceInformationRetrieval {
                             conMap.put("emnlp", 1);
                         }
                     }
-                    /*
 
-
-                    */
                 }
 
-                // Question 6
-                // System.out.println("\nDate :" +
-                // element.getElementsByTagName("date").item(0).getTextContent()); // to print date of cited
-                // documents
 
-                // Question 8
-                /*
-                 * if(element.getElementsByTagName("author").getLength() > 0) { for(int author = 0 ; author <
-                 * element.getElementsByTagName("author").getLength() ; author++) {
-                 * if(element.getElementsByTagName("author").item(author).getTextContent().
-                 * equals("Yoshua Bengio") |
-                 * element.getElementsByTagName("author").item(author).getTextContent().equals("Y. Bengio")) {
-                 * System.out.println("\nCurrent Element :" + nNode.getTextContent()); } } }
-                 */
             }
-            // System.out.println("\nCurrent Element :" + nNode.getNodeName()); // to print information on
-            // element/tag Name
 
         }
     }

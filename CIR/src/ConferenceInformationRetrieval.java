@@ -42,7 +42,13 @@ public class ConferenceInformationRetrieval {
     public static void main(String[] arg) {
         ConferenceInformationRetrieval cir = new ConferenceInformationRetrieval();
 
+        cir.process("D12");
+        cir.process("D13");
         cir.process("D14");
+        cir.process("D15");
+        cir.process("J14");
+        cir.process("Q14");
+        cir.process("W14");
         System.out.println("total docs = " + numDocs);
         System.out.println("total cites = " + numCites);
         System.out.println("unique cites = " + uniqueCites.size());
@@ -60,12 +66,6 @@ public class ConferenceInformationRetrieval {
         /*
 
 
-        cir.process("D13");
-        cir.process("D14");
-        cir.process("D15");
-        cir.process("J14");
-        cir.process("Q14");
-        cir.process("W14");
     // Q6, 9
         Iterator it = yearMap.entrySet().iterator();
         while (it.hasNext()) {

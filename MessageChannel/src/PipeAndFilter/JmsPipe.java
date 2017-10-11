@@ -138,12 +138,12 @@ public class JmsPipe implements IPipe, MessageListener {
     }
 
     @Override
-    public void onMessage(Message arg0) {
+    public void onMessage(Message msg) {
         // TODO Auto-generated method stub
         String msgText = "";
         try {
             if (msg instanceof TextMessage) {
-                msgText = msg.getText();
+                msgText = ((TextMessage) msg).getText();
             } else {
                 msgText = msg.toString();
             }

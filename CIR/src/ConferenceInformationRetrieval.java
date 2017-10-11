@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import data.Author;
 import data.Citation;
 
 public class ConferenceInformationRetrieval {
@@ -31,6 +32,7 @@ public class ConferenceInformationRetrieval {
                                                                                                                                     // encoding="UTF-8"?>)
     public static Set<Citation> uniqueCites = new HashSet<>();
     public static Set<String> uniqueAuthors = new HashSet<>();
+    public static Set<String> uniqueAuthorsHelper = new HashSet<>();
     public static int numCites = 0;
     public static int numDocs = 0;
     public static int oldestYear = Integer.MAX_VALUE;
@@ -43,18 +45,22 @@ public class ConferenceInformationRetrieval {
         ConferenceInformationRetrieval cir = new ConferenceInformationRetrieval();
 
         cir.process("D12");
-        cir.process("D13");
-        cir.process("D14");
-        cir.process("D15");
-        cir.process("J14");
-        cir.process("Q14");
-        cir.process("W14");
+        //cir.process("D13");
+        //cir.process("D14");
+        //cir.process("D15");
+        //cir.process("J14");
+        //cir.process("Q14");
+        //cir.process("W14");
         System.out.println("total docs = " + numDocs);
         System.out.println("total cites = " + numCites);
         System.out.println("unique cites = " + uniqueCites.size());
         System.out.println("unique authors = " + uniqueAuthors.size());
         System.out.println("oldestYear = " + oldestYear);
         System.out.println("newestYear = " + newestYear);
+
+        Author A = new Author("Tang Di Feng");
+        Author B = new Author("T. Di Feng");
+        System.out.println(A.equals(B));
 /*
         System.out.println(cir.permute("Tang Di Feng")[0]);
         System.out.println(cir.permute("Tang Di Feng")[1]);
@@ -219,8 +225,12 @@ public class ConferenceInformationRetrieval {
                         }
 
                         authorName = element.getElementsByTagName("author").item(i).getTextContent().trim().toLowerCase();
+//                        if(uniqueAuthorsHelper.contains(o))
                         uniqueAuthors.add(authorName);
                         authors.add(authorName);
+//                        for(String name : permute(authorName)) {
+//                            uniqueAuthorsHelper.add(name);
+//                        }
                         // / System.out.println(authorName);
 
                         if (authorName.equals("yoshua bengio")
@@ -299,7 +309,7 @@ public class ConferenceInformationRetrieval {
         }
     }
 
-    private String[] permute(String name) {
+    private String[] permute(String name) { // Tang Di Feng, T.D.F.
         String[] splittedName = name.split(" ");
         String[] finalForm = new String[splittedName.length + 1];
         String formString = "";
@@ -311,12 +321,14 @@ public class ConferenceInformationRetrieval {
                 } else {
                     formString += splittedName[indexMax];
                 }
-                formString += " ";
+                if(indexMax != splittedName.length-1)
+                    formString += " ";
             }
             finalForm[index] = formString;
             formString = "";
         }
-        finalForm[splittedName.length] = name;
+        if(!name.contains("."))
+            finalForm[splittedName.length] = name;
         return finalForm;
     }
 }

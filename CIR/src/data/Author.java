@@ -24,15 +24,27 @@ public class Author {
             return false;
         }
         Author otherAuthor = (Author) other;
-        return this.name.equals(otherAuthor.getName());
-    }
+        int thisIndex = 0;
+        for(int index = 0; index < otherAuthor.getName().length; index++) {
+            for(thisIndex = 0; thisIndex < this.name.length; thisIndex++) {
+                System.out.println(otherAuthor.getName()[index] + " " + this.name[thisIndex]);
+                if(otherAuthor.getName()[index].equals(this.name[thisIndex])) {
+                    break;
+                }
+            }
+            if(thisIndex == this.name.length) {
+                return false;
+            }
+        }
+        return true;
+    } //matching subset
 
     @Override
     public int hashCode() {
         return this.getName().hashCode();
     }
 
-    private String[] permute(String name) {
+    private String[] permute(String name) { // Tang Di Feng, T.D.F.
         String[] splittedName = name.split(" ");
         String[] finalForm = new String[splittedName.length + 1];
         String formString = "";
@@ -44,12 +56,14 @@ public class Author {
                 } else {
                     formString += splittedName[indexMax];
                 }
-                formString += " ";
+                if(indexMax != splittedName.length-1)
+                    formString += " ";
             }
             finalForm[index] = formString;
             formString = "";
         }
-        finalForm[splittedName.length] = name;
+        if(!name.contains("."))
+            finalForm[splittedName.length] = name;
         return finalForm;
     }
 

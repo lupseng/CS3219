@@ -1,5 +1,6 @@
 package PipeAndFilter;
 
+import java.util.LinkedList;
 import java.util.Properties;
 
 import javax.jms.JMSException;
@@ -18,8 +19,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * Matric 1:
- * Name   1:
+ * Matric 1: A0135807A
+ * Name   1: Tang Di Feng
  *
  * Matric 2:
  * Name   2:
@@ -38,6 +39,7 @@ public class JmsPipe implements IPipe, MessageListener {
     private QueueSender qsender;
     private QueueReceiver qreceiver;
     private Queue queue;
+    private LinkedList<String> messages;
     private TextMessage msg;
 
     public JmsPipe(String simpleConnectionFactory, String simpleQueue) {
@@ -50,6 +52,7 @@ public class JmsPipe implements IPipe, MessageListener {
         try {
             InitialContext ic = getInitialContext();
             init(ic, QUEUE);
+            messages = new LinkedList<String>();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -92,36 +95,29 @@ public class JmsPipe implements IPipe, MessageListener {
     @Override
     public Order read() {
         // TODO Auto-generated method stub
-        String msgText = "";
         try {
             if(qreceiver == null) {
                 qreceiver = qsession.createReceiver(queue);
                 qreceiver.setMessageListener(this);
                 msg = qsession.createTextMessage();
                 qcon.start();
-                synchronized (this) {
-                    while (true) {
-                        try {
-                            wait();
-                        } catch (InterruptedException ie) {
-                        }
-                    }
-                }
-            }
-            if (msg instanceof TextMessage) {
-                msgText = msg.getText();
-            } else {
-                msgText = msg.toString();
+//                synchronized (this) {
+//                    while (true) {
+//                        try {
+//                            wait();
+//                        } catch (InterruptedException ie) {
+//                        }
+//                    }
+//                }
             }
         } catch(Exception ex) {
             ex.printStackTrace();
         }
-        if(msgText == null) {
-            return null;
+        if(!messages.isEmpty()) {
+            return Order.fromString(messages.poll());
         }
         //System.out.println("Message Received: " + msgText);
-        System.out.println("Message Received: " + msgText);
-        return Order.fromString(msgText);
+        return null;
     }
 
     @Override
@@ -140,12 +136,15 @@ public class JmsPipe implements IPipe, MessageListener {
     @Override
     public void onMessage(Message msg) {
         // TODO Auto-generated method stub
-        String msgText = "";
+        String msgText;
         try {
             if (msg instanceof TextMessage) {
                 msgText = ((TextMessage) msg).getText();
             } else {
                 msgText = msg.toString();
+            }
+            if(msgText != null) {
+                messages.add(msgText);
             }
             System.out.println("Message Received: " + msgText);
         }catch(Exception ex) {

@@ -22,8 +22,8 @@ import javax.naming.NamingException;
  * Matric 1: A0135807A
  * Name   1: Tang Di Feng
  *
- * Matric 2:
- * Name   2:
+ * Matric 2: A0140063X
+ * Name   2: Chan Lup Seng
  *
  * This file implements a pipe that transfer messages using JMS.
  */

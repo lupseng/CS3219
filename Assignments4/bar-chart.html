@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+.bar { fill: steelblue; }
+
+.tooltip {
+          background: #eee;
+          opacity: 0.7;
+          box-shadow: 0 0 5px #999999;
+          color: #333;
+          display: none;
+          font-size: 12px;
+          left: 130px;
+          padding: 10px;
+          position: absolute;
+          text-align: center;
+          top: 95px;
+          width: 80px;
+          z-index: 10; }
+
+h1 {
+  font-size: 16px;
+  text-decoration: underline;
+  text-align: center;
+  font-weight: bold;
+}
+
+text {
+  font-size: 12px;
+  text-anchor: center
+  font-weight: bold;
+}
+
+</style>
+<body>
+<h1> Top 10 Authors </h1>
+<!-- load the d3.js library -->     
+<script src="d3.v4.min.js"></script>
+<script>
+var margin = {top: 50, right: 50, bottom: 30, left: 80},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+  
+var x = d3.scaleLinear().range([0, width]),
+    y = d3.scaleBand().range([height, 0]),
+    color = d3.scaleOrdinal(d3.schemeCategory10);
+
+var svg =  d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("text")
+  .attr("transform", "translate(" + (-margin.left + 10) + "," + (height/2) + ")rotate(-90)")
+  .text("Authors");
+
+svg.append("text")
+  .attr("transform", "translate(" + (width/2) + "," + (height + 30) + ")")
+  .text("Number of Times Mentioned");
+
+var tooltip = d3.select("body").append("div").attr("class", "tooltip");
+
+var parseTime = d3.timeParse("%Y-%m");
+var formatTime = d3.timeFormat("%b, %Y");
+
+d3.csv("bar-data.csv", function(error, data) {
+    if(error) throw error;
+
+    data.forEach(function(d) {
+      d.value = +d.value;
+      d.date = formatTime(parseTime(String(d.date)));
+    });
+  
+    x.domain([0, d3.max(data, function(d) { return d.value; })]).nice();
+    y.domain(data.map(function(d) { return d.date; })).padding(0.1);
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("height", y.bandwidth())
+        .attr("y", function(d) { return y(d.date); }) // y axis label
+        .attr("width", function(d) { return x(d.value); }) //length of the horizontal bar
+        .style("fill", function(d,i) {return color(i)})
+        .on("mousemove", function(d) {
+          tooltip
+          .style("top", (d3.event.pageY -10) + "px")
+          .style("left", (d3.event.pageX+10) + "px")
+          .style("display", "block")
+          .html(d.date);
+        })
+        .on("mouseout", function(d) { tooltip.style("display", "none");});
+});
+
+</script>
+</body>

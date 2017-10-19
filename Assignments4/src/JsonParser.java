@@ -43,21 +43,21 @@ public class JsonParser {
         return c;
     }
 
-    public static LinkedHashMap<Integer, Integer> sortHashMapByValues(HashMap<Integer, Integer> passedMap) {
-        List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
+    public static LinkedHashMap<String, Integer> sortHashMapByValues(HashMap<String, Integer> passedMap) {
+        List<String> mapKeys = new ArrayList<String>(passedMap.keySet());
         List<Integer> mapValues = new ArrayList<Integer>(passedMap.values());
         Collections.sort(mapValues, Collections.reverseOrder());
         Collections.sort(mapKeys, Collections.reverseOrder());
 
-        LinkedHashMap<Integer, Integer> sortedMap = new LinkedHashMap<Integer, Integer>();
+        LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
 
         Iterator<Integer> valueIt = mapValues.iterator();
         while (valueIt.hasNext()) {
             Integer val = valueIt.next();
-            Iterator<Integer> keyIt = mapKeys.iterator();
+            Iterator<String> keyIt = mapKeys.iterator();
 
             while (keyIt.hasNext()) {
-                Integer key = keyIt.next();
+                String key = keyIt.next();
                 Integer comp1 = passedMap.get(key);
                 Integer comp2 = val;
 
@@ -171,47 +171,46 @@ public class JsonParser {
     private static JSONArray links = new JSONArray();
     private static HashMap<String, Integer> topPapersMap = new HashMap<String, Integer>();
     private static HashMap<Integer, Integer> icseMap = new HashMap<Integer, Integer>();
+    private static HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
 
     public static void main(String[] args) {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
         MongoDatabase database = mongoClient.getDatabase("CS3219");
         MongoCollection<Document> collection = database.getCollection("papers");
-        Pattern p = Pattern.compile("icse", Pattern.CASE_INSENSITIVE);
-        FindIterable<Document> it = collection.find( Filters.eq("venue", p)).projection(Projections.include("year"));
+        Pattern p = Pattern.compile("[a-zA-Z].*");
+        FindIterable<Document> it = collection.find(Filters.eq("keyPhrases",p)).projection(Projections.include("keyPhrases"));
 
         for(Document doc : it){
-            System.out.println(doc.toJson());
-            int year = doc.getInteger("year", -1);
-            if(icseMap.containsKey(year)){
-                icseMap.put(year, icseMap.get(year)+1);
+           // System.out.println(doc.get("keyPhrases"));
+            ArrayList<String> words = (ArrayList<String>) doc.get("keyPhrases");
+            for(String word : words){
 
-            }else{
-
-
-                icseMap.put(year, 1);
+                if(wordMap.containsKey(word)){
+                    wordMap.put(word, wordMap.get(word) + 1);
+                }else{
+                    wordMap.put(word, 1);
+                }
             }
         }
-        LinkedHashMap<Integer, Integer> sorted = sortHashMapByValues(icseMap);
+     //   LinkedHashMap<String, Integer> sorted = sortHashMapByValues(wordMap);
 
-                Iterator ite = sorted.entrySet().iterator();
+                Iterator ite = wordMap.entrySet().iterator();
                 int count = 0;
-                 ArrayList<Integer> titles = new ArrayList<Integer>();
-               ArrayList<Integer> numCites = new ArrayList<Integer>();
+                 ArrayList<String> keywords = new ArrayList<String>();
+               ArrayList<Integer> num = new ArrayList<Integer>();
                while (ite.hasNext()) {
-                       count++;
                        Map.Entry pair = (Map.Entry) ite.next();
-                       titles.add( (Integer) pair.getKey());
-                       numCites.add((Integer) pair.getValue());
-
+                       if((Integer)pair.getValue()>100){
+                       keywords.add( (String) pair.getKey());
+                       num.add((Integer) pair.getValue());
                      System.out.println(pair.getKey() + " " +            pair.getValue() + " ");
-                     if (count == 5) {
-                         break;
-
-                     }
+                     count++;
+                       }
                 }
-               saveResults(titles, numCites);
+               System.out.println(count);
+               saveResults(keywords, num);
 
-        /*
+               /*
          * Q4
         Bson eq = Filters.eq("title", "Low-density parity check codes over GF(q)");
         Document myDoc = collection.find(eq).first();
@@ -380,16 +379,16 @@ public class JsonParser {
                      */
     }
 
-    private static void saveResults(ArrayList<Integer> authors, ArrayList<Integer> publications) {
+    private static void saveResults(ArrayList<String> authors, ArrayList<Integer> publications) {
 
         try {
-            FileWriter file = new FileWriter("q2.json");
+            FileWriter file = new FileWriter("q5.json");
             file.write("[");
             file.write(System.getProperty("line.separator"));
             for (int i = 0; i < authors.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("publication", publications.get(i));
-                obj.put("year", authors.get(i));
+                obj.put("count", publications.get(i));
+                obj.put("keyPhrase", authors.get(i));
                 file.append(obj.toJSONString());
                 file.write(",");
                 file.write(System.getProperty("line.separator"));

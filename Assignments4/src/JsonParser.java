@@ -1,27 +1,5 @@
 
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.model.Filters;
-
-
-import java.util.ArrayList;
-import java.util.List;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -35,6 +13,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.bson.Document;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 
 //org.json.simple
 public class JsonParser {
@@ -52,21 +43,21 @@ public class JsonParser {
         return c;
     }
 
-    public static LinkedHashMap<Integer, Integer> sortHashMapByValues(HashMap<Integer, Integer> passedMap) {
-        List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
+    public static LinkedHashMap<String, Integer> sortHashMapByValues(HashMap<String, Integer> passedMap) {
+        List<String> mapKeys = new ArrayList<String>(passedMap.keySet());
         List<Integer> mapValues = new ArrayList<Integer>(passedMap.values());
         Collections.sort(mapValues, Collections.reverseOrder());
         Collections.sort(mapKeys, Collections.reverseOrder());
 
-        LinkedHashMap<Integer, Integer> sortedMap = new LinkedHashMap<Integer, Integer>();
+        LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
 
         Iterator<Integer> valueIt = mapValues.iterator();
         while (valueIt.hasNext()) {
             Integer val = valueIt.next();
-            Iterator<Integer> keyIt = mapKeys.iterator();
+            Iterator<String> keyIt = mapKeys.iterator();
 
             while (keyIt.hasNext()) {
-                Integer key = keyIt.next();
+                String key = keyIt.next();
                 Integer comp1 = passedMap.get(key);
                 Integer comp2 = val;
 
@@ -148,7 +139,7 @@ public class JsonParser {
         }
 */
     }
-    
+
     private static void findPapers(){
         int count= 0;
         JSONParser parser = new JSONParser();
@@ -163,8 +154,8 @@ public class JsonParser {
                 count++;
                 System.out.println(count);
                 paperMap.put(title, jsonObject);
-            }         
-     
+            }
+
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         } catch (IOException ioe) {
@@ -172,17 +163,49 @@ public class JsonParser {
         } catch (ParseException pe) {
             pe.printStackTrace();
         }
-        
+
         System.out.println("paperMap done.");
     }
 
     private static JSONArray nodes = new JSONArray();
     private static JSONArray links = new JSONArray();
+    private static HashMap<String, Integer> topPapersMap = new HashMap<String, Integer>();
 
     public static void main(String[] args) {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
         MongoDatabase database = mongoClient.getDatabase("CS3219");
         MongoCollection<Document> collection = database.getCollection("papers");
+        Pattern p = Pattern.compile("arxiv", Pattern.CASE_INSENSITIVE);
+        FindIterable<Document> it = collection.find( Filters.eq("venue", p)).projection(Projections.include("id","title", "inCitations"));
+
+        for(Document doc : it){
+            System.out.println(doc.toJson());
+            ArrayList<String> inCitations2 = (ArrayList<String>)  doc.get("inCitations");
+            String title = doc.get("title").toString();
+            topPapersMap.put(title, inCitations2.size());
+        }
+        LinkedHashMap<String, Integer> sorted = sortHashMapByValues(topPapersMap);
+
+                Iterator ite = sorted.entrySet().iterator();
+                int count = 0;
+                 ArrayList<String> titles = new ArrayList<String>();
+               ArrayList<Integer> numCites = new ArrayList<Integer>();
+               while (ite.hasNext()) {
+                       count++;
+                       Map.Entry pair = (Map.Entry) ite.next();
+                       titles.add((String) pair.getKey());
+                       numCites.add((Integer) pair.getValue());
+
+                     System.out.println(pair.getKey() + " " +            pair.getValue() + " ");
+                     if (count == 5) {
+                         break;
+
+                     }
+                }
+               saveResults(titles, numCites);
+
+        /*
+         * Q4
         Bson eq = Filters.eq("title", "Low-density parity check codes over GF(q)");
         Document myDoc = collection.find(eq).first();
         Block<Document> printBlock = new Block<Document>() {
@@ -191,16 +214,16 @@ public class JsonParser {
             }
         };
         int count = 0;
-        System.out.println(myDoc.toJson());                    
-        
+        System.out.println(myDoc.toJson());
+
         JSONObject root = new JSONObject();
         root.put("title", myDoc.get("title"));
         root.put("group", 1);
         nodes.add(root);
-        
+
         ArrayList<String> inCitations = (ArrayList<String>)  myDoc.get("inCitations");
         for (int i = 0; i < inCitations.size(); i++) {
-            FindIterable<Document> it = collection.find( Filters.eq("id", inCitations.get(i)));
+            FindIterable<Document> it = collection.find( Filters.eq("id", inCitations.get(i))).projection(Projections.include("title", "inCitations"));
             for(Document doc : it){
                 JSONObject link = new JSONObject();
                 link.put("source", doc.get("title"));
@@ -215,7 +238,7 @@ public class JsonParser {
                // System.out.println(doc.toJson());
                 ArrayList<String> inCitations2 = (ArrayList<String>)  doc.get("inCitations");
                 for (int j = 0; j < inCitations2.size(); j++) {
-                    FindIterable<Document> it2 = collection.find( Filters.eq("id", inCitations2.get(j)));
+                    FindIterable<Document> it2 = collection.find( Filters.eq("id", inCitations2.get(j))).projection(Projections.include("title", "inCitations"));
                     for(Document doc2 : it){
                         JSONObject link2 = new JSONObject();
                         link2.put("source", doc2.get("title"));
@@ -230,25 +253,36 @@ public class JsonParser {
                         System.out.println(count);
                         //System.out.println(doc2.toJson());
                     }
-                    
+
                 }
-                
+
             }
         }
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter("q4.json"), 32768);
+            out.write("{");
+            out.write(System.getProperty("line.separator"));
+            out.write("\"nodes\":");
+            out.write(System.getProperty("line.separator"));
             out.write(nodes.toJSONString());
+            out.write("],");
+            out.write(System.getProperty("line.separator"));
             System.out.println("nodes ok.");
+            out.write("\"links\":");
+            out.write(System.getProperty("line.separator"));
             out.write(links.toJSONString());
             System.out.println("links ok.");
+            out.write(System.getProperty("line.separator"));
+            out.write("}");
             out.flush();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+        */
         /*
+
         findPapers();
         JSONParser parser = new JSONParser();
         try {
@@ -279,7 +313,7 @@ public class JsonParser {
                      * jsonObject.get("authors"); for (Object authorObj :
                      * authors) { JSONObject author = (JSONObject) authorObj;//
                      * check at // least one
-                     * 
+                     *
                      * String idStr =
                      * removeSpecialCharacters(author.get("ids").toString()); if
                      * (idStr.isEmpty()) { System.out.println("Author:" +
@@ -291,7 +325,7 @@ public class JsonParser {
                      * authorMap.put(id, 1); } } //
                      * System.out.println("InCitations:" + //
                      * jsonObject.get("inCitations").toString());
-                     * 
+                     *
                 }
                 if (jsonObject.get("venue").toString().contains("ICSE")) {
                     // System.out.println("Title:" +
@@ -313,11 +347,11 @@ public class JsonParser {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            
+
             /*
              * LinkedHashMap<Integer, Integer> sorted =
              * sortHashMapByValues(authorMap);
-             * 
+             *
              * Iterator it = sorted.entrySet().iterator(); int count = 0;
              * ArrayList<String> authorNames = new ArrayList<>();
              * ArrayList<Integer> numPublications = new ArrayList<>(); while
@@ -326,9 +360,9 @@ public class JsonParser {
              * numPublications.add((int) pair.getValue()); //
              * System.out.println(authorNameMap.get(pair.getKey()) + " " + //
              * pair.getValue() + " "); if (count == 10) { break;
-             * 
+             *
              * } } saveResults(authorNames, numPublications);
-             
+
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
         } catch (IOException ioe) {
@@ -340,13 +374,15 @@ public class JsonParser {
     }
 
     private static void saveResults(ArrayList<String> authors, ArrayList<Integer> publications) {
-/*
-        try (FileWriter file = new FileWriter("qasdasd.json")) {
+
+        try {
+            FileWriter file = new FileWriter("q2.json");
             file.write("[");
+            file.write(System.getProperty("line.separator"));
             for (int i = 0; i < authors.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("Author", authors.get(i));
-                obj.put("Publication", publications.get(i));
+                obj.put("citation", publications.get(i));
+                obj.put("title", authors.get(i));
                 file.append(obj.toJSONString());
                 file.write(",");
                 file.write(System.getProperty("line.separator"));
@@ -355,11 +391,12 @@ public class JsonParser {
                 // System.out.println("\nJSON Object: " + obj);
             }
             file.write("]");
+            file.flush();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-*/
+
     }
 }

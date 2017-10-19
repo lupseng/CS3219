@@ -43,21 +43,21 @@ public class JsonParser {
         return c;
     }
 
-    public static LinkedHashMap<String, Integer> sortHashMapByValues(HashMap<String, Integer> passedMap) {
-        List<String> mapKeys = new ArrayList<String>(passedMap.keySet());
+    public static LinkedHashMap<Integer, Integer> sortHashMapByValues(HashMap<Integer, Integer> passedMap) {
+        List<Integer> mapKeys = new ArrayList<Integer>(passedMap.keySet());
         List<Integer> mapValues = new ArrayList<Integer>(passedMap.values());
         Collections.sort(mapValues, Collections.reverseOrder());
         Collections.sort(mapKeys, Collections.reverseOrder());
 
-        LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<Integer, Integer> sortedMap = new LinkedHashMap<Integer, Integer>();
 
         Iterator<Integer> valueIt = mapValues.iterator();
         while (valueIt.hasNext()) {
             Integer val = valueIt.next();
-            Iterator<String> keyIt = mapKeys.iterator();
+            Iterator<Integer> keyIt = mapKeys.iterator();
 
             while (keyIt.hasNext()) {
-                String key = keyIt.next();
+                Integer key = keyIt.next();
                 Integer comp1 = passedMap.get(key);
                 Integer comp2 = val;
 
@@ -170,30 +170,37 @@ public class JsonParser {
     private static JSONArray nodes = new JSONArray();
     private static JSONArray links = new JSONArray();
     private static HashMap<String, Integer> topPapersMap = new HashMap<String, Integer>();
+    private static HashMap<Integer, Integer> icseMap = new HashMap<Integer, Integer>();
 
     public static void main(String[] args) {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
         MongoDatabase database = mongoClient.getDatabase("CS3219");
         MongoCollection<Document> collection = database.getCollection("papers");
-        Pattern p = Pattern.compile("arxiv", Pattern.CASE_INSENSITIVE);
-        FindIterable<Document> it = collection.find( Filters.eq("venue", p)).projection(Projections.include("id","title", "inCitations"));
+        Pattern p = Pattern.compile("icse", Pattern.CASE_INSENSITIVE);
+        FindIterable<Document> it = collection.find( Filters.eq("venue", p)).projection(Projections.include("year"));
 
         for(Document doc : it){
             System.out.println(doc.toJson());
-            ArrayList<String> inCitations2 = (ArrayList<String>)  doc.get("inCitations");
-            String title = doc.get("title").toString();
-            topPapersMap.put(title, inCitations2.size());
+            int year = doc.getInteger("year", -1);
+            if(icseMap.containsKey(year)){
+                icseMap.put(year, icseMap.get(year)+1);
+
+            }else{
+
+
+                icseMap.put(year, 1);
+            }
         }
-        LinkedHashMap<String, Integer> sorted = sortHashMapByValues(topPapersMap);
+        LinkedHashMap<Integer, Integer> sorted = sortHashMapByValues(icseMap);
 
                 Iterator ite = sorted.entrySet().iterator();
                 int count = 0;
-                 ArrayList<String> titles = new ArrayList<String>();
+                 ArrayList<Integer> titles = new ArrayList<Integer>();
                ArrayList<Integer> numCites = new ArrayList<Integer>();
                while (ite.hasNext()) {
                        count++;
                        Map.Entry pair = (Map.Entry) ite.next();
-                       titles.add((String) pair.getKey());
+                       titles.add( (Integer) pair.getKey());
                        numCites.add((Integer) pair.getValue());
 
                      System.out.println(pair.getKey() + " " +            pair.getValue() + " ");
@@ -373,7 +380,7 @@ public class JsonParser {
                      */
     }
 
-    private static void saveResults(ArrayList<String> authors, ArrayList<Integer> publications) {
+    private static void saveResults(ArrayList<Integer> authors, ArrayList<Integer> publications) {
 
         try {
             FileWriter file = new FileWriter("q2.json");
@@ -381,8 +388,8 @@ public class JsonParser {
             file.write(System.getProperty("line.separator"));
             for (int i = 0; i < authors.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("citation", publications.get(i));
-                obj.put("title", authors.get(i));
+                obj.put("publication", publications.get(i));
+                obj.put("year", authors.get(i));
                 file.append(obj.toJSONString());
                 file.write(",");
                 file.write(System.getProperty("line.separator"));

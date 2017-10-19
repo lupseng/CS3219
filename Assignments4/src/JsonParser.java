@@ -178,13 +178,13 @@ public class JsonParser {
         MongoDatabase database = mongoClient.getDatabase("CS3219");
         MongoCollection<Document> collection = database.getCollection("papers");
         Pattern p = Pattern.compile("[a-zA-Z].*");
-        FindIterable<Document> it = collection.find(Filters.eq("keyPhrases",p)).projection(Projections.include("keyPhrases"));
+        FindIterable<Document> it = collection.find(Filters.eq("paperAbstract",p)).projection(Projections.include("paperAbstract"));
 
         for(Document doc : it){
            // System.out.println(doc.get("keyPhrases"));
-            ArrayList<String> words = (ArrayList<String>) doc.get("keyPhrases");
-            for(String word : words){
-
+            String str = doc.get("paperAbstract").toString().trim().toLowerCase();
+            for(String word : str.split(" ")){
+            //    word = removeSpecialCharacters(word);
                 if(wordMap.containsKey(word)){
                     wordMap.put(word, wordMap.get(word) + 1);
                 }else{
@@ -200,7 +200,7 @@ public class JsonParser {
                ArrayList<Integer> num = new ArrayList<Integer>();
                while (ite.hasNext()) {
                        Map.Entry pair = (Map.Entry) ite.next();
-                       if((Integer)pair.getValue()>100){
+                       if((Integer)pair.getValue()>1000){
                        keywords.add( (String) pair.getKey());
                        num.add((Integer) pair.getValue());
                      System.out.println(pair.getKey() + " " +            pair.getValue() + " ");
@@ -208,6 +208,7 @@ public class JsonParser {
                        }
                 }
                System.out.println(count);
+
                saveResults(keywords, num);
 
                /*
@@ -382,13 +383,13 @@ public class JsonParser {
     private static void saveResults(ArrayList<String> authors, ArrayList<Integer> publications) {
 
         try {
-            FileWriter file = new FileWriter("q5.json");
+            FileWriter file = new FileWriter("try.json");
             file.write("[");
             file.write(System.getProperty("line.separator"));
             for (int i = 0; i < authors.size(); i++) {
                 JSONObject obj = new JSONObject();
                 obj.put("count", publications.get(i));
-                obj.put("keyPhrase", authors.get(i));
+                obj.put("word", authors.get(i));
                 file.append(obj.toJSONString());
                 file.write(",");
                 file.write(System.getProperty("line.separator"));

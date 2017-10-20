@@ -1,7 +1,7 @@
 [
-{"citation":301,"title":"Link Prediction in Complex Networks: A Survey"},
-{"citation":200,"title":"Combining geometry and combinatorics: A unified approach to sparse signal recovery"},
-{"citation":158,"title":"Computational Mechanics: Pattern and Prediction, Structure and Simplicity"},
-{"citation":114,"title":"Polarization for arbitrary discrete memoryless channels"},
-{"citation":108,"title":"A kernel method for canonical correlation analysis"},
+{"citation":301,"title":"Link Prediction in Complex Networks: A Survey", "authors":[{"ids":["1993399"],"name":"Andrew P Blake"}]},
+{"citation":200,"title":"Combining geometry and combinatorics: A unified approach to sparse signal recovery", "authors":[{"ids":[],"name":"Curtis T Mcmullen"}]},
+{"citation":158,"title":"Computational Mechanics: Pattern and Prediction, Structure and Simplicity", "authors":[{"ids":[],"name":"Diego López De Ipiña"},{"ids":["4939458"],"name":"Iñaki Vázquez"},{"ids":["1748935"],"name":"Joseba Abaitua"}]},
+{"citation":114,"title":"Polarization for arbitrary discrete memoryless channels", "authors":[{"ids":["7429063"],"name":"Anne Denhov"},{"ids":["8049133"],"name":"Alain Topor"}]},
+{"citation":108,"title":"A kernel method for canonical correlation analysis", "authors":[{"ids":["2546993"],"name":"P Ludwig"},{"ids":["2145102"],"name":"L Williams"},{"ids":["7499211"],"name":"D R Nässel"},{"ids":["2008979"],"name":"H Reichert"},{"ids":["6965875"],"name":"G Boyan"}]}
 ]

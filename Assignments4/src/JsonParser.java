@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -15,17 +16,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
+
+import javafx.util.Pair;
 
 //org.json.simple
 public class JsonParser {
@@ -171,24 +176,74 @@ public class JsonParser {
     private static JSONArray links = new JSONArray();
     private static HashMap<String, Integer> topPapersMap = new HashMap<String, Integer>();
     private static HashMap<Integer, Integer> icseMap = new HashMap<Integer, Integer>();
-    private static HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+    private static HashMap<Pair<Integer,Integer>, Integer> wordMap = new HashMap<Pair<Integer,Integer>, Integer>();
+    private static HashMap<String, Boolean> titleMap = new HashMap<String, Boolean>();
 
     public static void main(String[] args) {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
         MongoDatabase database = mongoClient.getDatabase("CS3219");
         MongoCollection<Document> collection = database.getCollection("papers");
-        Pattern p = Pattern.compile("[a-zA-Z].*");
-        FindIterable<Document> it = collection.find(Filters.eq("paperAbstract",p)).projection(Projections.include("paperAbstract"));
+        /*
+        FindIterable<Document> it = collection.find().projection(Projections.include("authors", "year"));
+        for(Document doc : it){
+            // String str = doc.get("title").toString().trim().toLowerCase();
+             ArrayList<Document> str = (ArrayList<Document>) doc.get("authors");
+               for(Document doc2 : str){
+                   String word = doc2.getString("name");
+                   ArrayList<String> ids =(ArrayList<String>) doc2.get("ids");
+                   if(ids.isEmpty())continue;
+                   Integer id = Integer.parseInt(ids.get(0));
+             //    word = removeSpecialCharacters(word);
+                   if(id.equals(4564363)||id.equals(1723588)||id.equals(1742253)||id.equals(1752812)||id.equals(3137451)){
+                   //    System.out.println(doc2);
+                       authorNameMap.put(id, word);
+                       Pair<Integer,Integer> pair = new Pair<Integer,Integer>(doc.getInteger("year",-1), id);
+                       if(wordMap.containsKey(pair)){
+                     wordMap.put(pair, wordMap.get(pair) + 1);
+                 }else{
+                     wordMap.put(pair, 1);
+                 }
+                   }
+             }
+         }
+
+        Iterator ite = wordMap.entrySet().iterator();
+        int count = 0;
+         ArrayList<String> keywords = new ArrayList<String>();
+        ArrayList<Integer> year = new ArrayList<Integer>();
+       ArrayList<Integer> num = new ArrayList<Integer>();
+       while (ite.hasNext()) {
+               Map.Entry pair = (Map.Entry) ite.next();
+              // if((Integer)pair.getValue()>35){
+               Pair keyPair = (Pair) pair.getKey();
+                   keywords.add( authorNameMap.get((Integer) keyPair.getValue()));
+                   year.add((Integer) keyPair.getKey());
+                   num.add((Integer) pair.getValue());
+                 System.out.println(authorNameMap.get((Integer) keyPair.getValue()) + " " + pair.getKey() +  " " +          pair.getValue() + " ");
+                 count++;
+                 
+             //  }
+               
+        }
+       System.out.println(count);
+
+     saveResults(year, keywords, num);
+     */
+        /*
+ Pattern p = Pattern.compile("[a-zA-Z].*");
+        FindIterable<Document> it = collection.find(Filters.eq("keyPhrases",p)).projection(Projections.include("keyPhrases","year"));
 
         for(Document doc : it){
-           // System.out.println(doc.get("keyPhrases"));
-            String str = doc.get("paperAbstract").toString().trim().toLowerCase();
-            for(String word : str.split(" ")){
+           // String str = doc.get("title").toString().trim().toLowerCase();
+            ArrayList<String> str = (ArrayList<String>) doc.get("keyPhrases");
+            int year = doc.getInteger("year", -1);
+            for(String word : str){
             //    word = removeSpecialCharacters(word);
-                if(wordMap.containsKey(word)){
-                    wordMap.put(word, wordMap.get(word) + 1);
+                Pair<Integer,String> pair = new Pair<Integer,String>(year, word);
+                if(wordMap.containsKey(pair)){
+                    wordMap.put(pair, wordMap.get(pair) + 1);
                 }else{
-                    wordMap.put(word, 1);
+                    wordMap.put(pair, 1);
                 }
             }
         }
@@ -198,21 +253,26 @@ public class JsonParser {
                 int count = 0;
                  ArrayList<String> keywords = new ArrayList<String>();
                ArrayList<Integer> num = new ArrayList<Integer>();
+               ArrayList<Integer> year = new ArrayList<Integer>();
                while (ite.hasNext()) {
                        Map.Entry pair = (Map.Entry) ite.next();
-                       if((Integer)pair.getValue()>1000){
-                       keywords.add( (String) pair.getKey());
-                       num.add((Integer) pair.getValue());
-                     System.out.println(pair.getKey() + " " +            pair.getValue() + " ");
-                     count++;
+                       if((Integer)pair.getValue()>10){
+                           Pair keyPair = (Pair) pair.getKey();
+                           year.add((Integer) keyPair.getKey());
+                           keywords.add( (String) keyPair.getValue());
+                           num.add((Integer) pair.getValue());
+                         System.out.println(pair.getKey() + " " +            pair.getValue() + " ");
+                         count++;
+                         
                        }
+                       
                 }
                System.out.println(count);
 
-               saveResults(keywords, num);
+              saveResults(year, keywords, num);
+*/
+              
 
-               /*
-         * Q4
         Bson eq = Filters.eq("title", "Low-density parity check codes over GF(q)");
         Document myDoc = collection.find(eq).first();
         Block<Document> printBlock = new Block<Document>() {
@@ -222,40 +282,65 @@ public class JsonParser {
         };
         int count = 0;
         System.out.println(myDoc.toJson());
-
         JSONObject root = new JSONObject();
         root.put("title", myDoc.get("title"));
         root.put("group", 1);
+        ArrayList<Document> str = (ArrayList<Document>) myDoc.get("authors");
+        JSONArray authors = new JSONArray();
+        authors.addAll(str);
+        root.put("authors", authors);
         nodes.add(root);
+        titleMap.put(myDoc.get("title").toString(), true);
 
         ArrayList<String> inCitations = (ArrayList<String>)  myDoc.get("inCitations");
         for (int i = 0; i < inCitations.size(); i++) {
-            FindIterable<Document> it = collection.find( Filters.eq("id", inCitations.get(i))).projection(Projections.include("title", "inCitations"));
+            FindIterable<Document> it = collection.find( Filters.eq("id", inCitations.get(i))).projection(Projections.include("title", "inCitations", "authors"));
             for(Document doc : it){
+                ArrayList<Document> str2 = (ArrayList<Document>) doc.get("authors");
+                 System.out.println(str2);
+                if(str2== null ||str2.isEmpty()) continue;
                 JSONObject link = new JSONObject();
                 link.put("source", doc.get("title"));
-                link.put("target", root);
+                link.put("target", myDoc.get("title"));
                 link.put("value", 1);
                 links.add(link);
+                if(!titleMap.containsKey(doc.get("title").toString())){
                 JSONObject node = new JSONObject();
                 node.put("title", doc.get("title"));
                 node.put("group", 2);
+                JSONArray authors2 = new JSONArray();
+                authors2.addAll(str2);
+                node.put("authors", authors2);
                 nodes.add(node);
+                titleMap.put(doc.get("title").toString(), true);
+                }
+                
 
                // System.out.println(doc.toJson());
                 ArrayList<String> inCitations2 = (ArrayList<String>)  doc.get("inCitations");
                 for (int j = 0; j < inCitations2.size(); j++) {
-                    FindIterable<Document> it2 = collection.find( Filters.eq("id", inCitations2.get(j))).projection(Projections.include("title", "inCitations"));
-                    for(Document doc2 : it){
+                    FindIterable<Document> it2 = collection.find( Filters.eq("id", inCitations2.get(j))).projection(Projections.include("title", "inCitations", "authors"));
+                    for(Document doc2 : it2){
+                        ArrayList<Document> str3 = (ArrayList<Document>) doc2.get("authors");
+                       // System.out.println(str3);
+                        if (str3 == null || str3.isEmpty()) continue;
+                      //  System.out.println(doc2.get("title"));
                         JSONObject link2 = new JSONObject();
                         link2.put("source", doc2.get("title"));
-                        link2.put("target", node);
+                        link2.put("target", doc.get("title"));
                         link2.put("value", 5);
-                        links.add(link);
-                        JSONObject node2 = new JSONObject();
-                        node2.put("title", doc2.get("title"));
-                        node2.put("group", 3);
-                        nodes.add(node2);
+                        links.add(link2);
+                        if(!titleMap.containsKey(doc2.get("title").toString())){
+
+                            JSONObject node2 = new JSONObject();
+                            node2.put("title", doc2.get("title"));
+                            node2.put("group", 3);
+                            JSONArray authors3 = new JSONArray();
+                                authors3.addAll(str3);
+                            node2.put("authors", authors3);
+                            nodes.add(node2);
+                            titleMap.put(doc2.get("title").toString(), true);
+                        }
                         count++;
                         System.out.println(count);
                         //System.out.println(doc2.toJson());
@@ -287,7 +372,7 @@ public class JsonParser {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        */
+        
         /*
 
         findPapers();
@@ -380,16 +465,41 @@ public class JsonParser {
                      */
     }
 
-    private static void saveResults(ArrayList<String> authors, ArrayList<Integer> publications) {
+    private static void saveCSV(ArrayList<String> authors, ArrayList<Integer> publications) {
 
         try {
-            FileWriter file = new FileWriter("try.json");
+            BufferedWriter file = new BufferedWriter(new FileWriter("q5.csv"), 32768);
+            file.write("id,value");
+            file.write(System.getProperty("line.separator"));
+            for (int i = 0; i < authors.size(); i++) {
+                file.write(authors.get(i));
+                file.write(",");
+                file.write(String.valueOf(publications.get(i)));
+                file.write(System.getProperty("line.separator"));
+                // System.out.println("Successfully Copied JSON Object to
+                // File...");
+                // System.out.println("\nJSON Object: " + obj);
+            }
+            file.flush();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+    
+    private static void saveResults(ArrayList<Integer> year, ArrayList<String> authors, ArrayList<Integer> publications) {
+
+        try {
+            FileWriter file = new FileWriter("line.json");
             file.write("[");
             file.write(System.getProperty("line.separator"));
             for (int i = 0; i < authors.size(); i++) {
                 JSONObject obj = new JSONObject();
+                obj.put("year", year.get(i));
+                obj.put("author", authors.get(i));
                 obj.put("count", publications.get(i));
-                obj.put("word", authors.get(i));
                 file.append(obj.toJSONString());
                 file.write(",");
                 file.write(System.getProperty("line.separator"));

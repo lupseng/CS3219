@@ -1,0 +1,33 @@
+
+<html>
+<div id="chartContainer">
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+  <script type="text/javascript">
+    var svg = dimple.newSvg("#chartContainer", 590, 400);
+    d3.json("q3.json", function (data) {
+
+      // Create and Position a Chart
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(60, 30, 500, 300);
+      var x = myChart.addCategoryAxis("x", "year")
+      myChart.addMeasureAxis("y", "publication");
+
+      // Order the x axis by date
+      x.addOrderRule("year");
+
+      // Min price will be green, middle price yellow and max red
+      myChart.addColorAxis("publication", ["red", "yellow", "green"]);
+
+      // Add a thick line with markers
+      var lines = myChart.addSeries(null, dimple.plot.line);
+      lines.lineWeight = 5;
+      lines.lineMarkers = true;
+
+      // Draw the chart
+      myChart.draw();
+
+    });
+  </script>
+</div>
+</html>

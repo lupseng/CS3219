@@ -1,0 +1,22 @@
+
+<html>
+<div id="chartContainer">
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+  <script type="text/javascript">
+    var svg = dimple.newSvg("#chartContainer", 590, 400);
+    d3.json("q5.json", function (data) {
+   //   data = dimple.filterData(data, "Owner", ["Aperture", "Black Mesa"])
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(60, 30, 505, 305);
+      var x = myChart.addCategoryAxis("x", "year");
+      x.addOrderRule("year");
+      myChart.addMeasureAxis("y", "count");
+      var s = myChart.addSeries("author", dimple.plot.line);
+     // s.interpolation = "cardinal";
+      myChart.addLegend(60, 10, 600, 20, "right");
+      myChart.draw();
+    });
+  </script>
+</div>
+</html>

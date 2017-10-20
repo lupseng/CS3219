@@ -125,24 +125,6 @@
          .each(function(d) {this._current = d;});
 
 
-
-      //   path.append("text")
-      //     .attr("transform", function(d) {
-      //     var _d = arc.centroid(d);
-      //     _d[0] *= 1.5; //multiply by a constant factor
-      //     _d[1] *= 1.5; //multiply by a constant factor
-      //     return "translate(" + _d + ")";
-      //   })
-      //     .attr("dy", ".50em")
-      //     .style("text-anchor", "middle")
-      //     .text(function(d) {
-      //   if(d.data.percentage < 8) {
-      //     return '';
-      //   }
-      //   return d.data.percentage + '%';
-      // });
-
-
         path.on('mouseover', function(d) {
           var total = d3.sum(data.map(function(d) {
             return (d.enabled)?d.citation:0;
@@ -161,28 +143,7 @@
           tooltip.style('display', 'none');
         });
 
-        svg.selectAll(".Text")
-          .data(data)
-          .enter().append("text")
-          .attr("x", 5)
-          .attr("dy", 18)
-          .append("textPath")
-          .attr("xlink:href", function(d,i) {return "#arc" + i;})
-          .text(function(d) { return Math.round(1000 * d.citation/(d3.sum(data.map(function(d) {return (d.enabled)?d.citation:0;})))) / 10 + "%";});
-
-        // path.on('mousemove', function(d) {
-        //   var total = d3.sum(data.map(function(d) {
-        //     return (d.enabled)?d.citation:0;
-        //   }));
-        //   var percent = Math.round(1000 * d.data.citation/total) / 10;
-        //  tooltip
-        //   .select('.title').html(d.data.title)
-        //   .select('.citation').html(d.data.citation)
-        //   .select('.percent').html(percent + '%')
-        //   .style("top", (d3.event.pageY -10) + "px")
-        //   .style("left", (d3.event.pageX+10) + "px")
-        //   .style("display", "block")
-        // });
+        path.on('mousemove', function(d) { tooltip.style('top', (d3.event.layerY + 10) + 'px') .style('left', (d3.event.layerX + 10) + 'px'); }); 
 
          var legend = svg.selectAll('.legend')
           .data(color.domain())
@@ -200,7 +161,6 @@
          legend.append('rect')
            .attr('width', legendRectSize)
            .attr('height', legendRectSize)
-           //.attr('transform', function(d,i) {return "translate(350," +  "400"  + ")";})
            .attr('transform', function(d,i) {return "translate(-900," +  "420"  + ")";})
            .style('fill', color)
            .style('stroke', color)
@@ -240,7 +200,6 @@
          legend.append('text')
            .attr('x', legendRectSize + legendSpacing)
            .attr('y', legendRectSize - legendSpacing)
-           //.attr('transform', function(d,i) {return "translate(350," +  "400" + ")";})
            .attr('transform', function(d,i) {return "translate(-900," +  "420"  + ")";})
            .text(function(d) {return  d;});
       });

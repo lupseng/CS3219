@@ -9,7 +9,7 @@
 
 d3.json("q1.json", function (data) {
       
-    var svg = dimple.newSvg("body", 800, 600);
+    var svg = dimple.newSvg("body", 1000, 600);
 		var chart = new dimple.chart(svg, data);
     var x = chart.addCategoryAxis("x", "Author");
 		x.addOrderRule("Publication");

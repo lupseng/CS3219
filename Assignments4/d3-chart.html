@@ -35,7 +35,7 @@
           fill: transparent !important;
         }
         h1 {
-          font-size:22px;
+          font-size:30px;
           text-decoration: underline;
           text-align: center;
         }
@@ -56,13 +56,6 @@
     <script>
       (function(d3) {
         'use strict';
-
-        <!--var dataset = [-->
-          <!--{ label: 'Abulia', count: 10 },-->
-          <!--{ label: 'Betelgeuse', count: 20 },-->
-          <!--{ label: 'Cantaloupe', count: 30 },-->
-          <!--{ label: 'Dijkstra', count: 40 }-->
-        <!--];-->
 
         var width = window.innerWidth;
         var height = window.innerHeight;
@@ -114,11 +107,11 @@
             d.enabled = true;
           });
 
-        var path = svg.selectAll('arc')
+        var path = svg.selectAll('path')
           .data(pie(data))
           .enter()
           .append('path')
-          .attr('d', arc)
+          .attr('d', arc) //string containing a series of path descriptions
           .attr('fill', function(d, i) {
             return color(d.data.title);
           })
@@ -155,13 +148,14 @@
             var offset = height * color.domain().length/2;
             var horz = -2 * legendRectSize;
             var vert = i * height - offset;
-            return 'translate(' + horz + ',' + vert + ')';
+            return 'translate(' + (horz-900) + ',' + (vert+420) + ')';
+            //return 'translate(' + (0) + ',' + (0) + ')';
           });
 
          legend.append('rect')
            .attr('width', legendRectSize)
            .attr('height', legendRectSize)
-           .attr('transform', function(d,i) {return "translate(-900," +  "420"  + ")";})
+           //.attr('transform', function(d,i) {return "translate(-900," +  "420"  + ")";})
            .style('fill', color)
            .style('stroke', color)
            .on('click' , function(title) {
@@ -200,7 +194,7 @@
          legend.append('text')
            .attr('x', legendRectSize + legendSpacing)
            .attr('y', legendRectSize - legendSpacing)
-           .attr('transform', function(d,i) {return "translate(-900," +  "420"  + ")";})
+           //.attr('transform', function(d,i) {return "translate(-900," +  "420"  + ")";})
            .text(function(d) {return  d;});
       });
       })(window.d3);

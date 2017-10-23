@@ -91,7 +91,7 @@ d3.json("q4.json", function(error, graph) {
 			.on("end", dragended));
 
 	node.append("title")
-		.text(function(d) {return d.title + "\nAuthors: " + d.authors.map(function(k) {return k.name;}) + "\n(Group: " + d.group +")"; })
+		.text(function(d) {return "Title: " + d.title + "\nAuthors: " + d.authors.map(function(k) {return k.name;}) + "\n(Group: " + d.group +")"; })
 
 	simulation
 		.nodes(graph.nodes)
